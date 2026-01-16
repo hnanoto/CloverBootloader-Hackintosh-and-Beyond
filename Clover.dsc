@@ -856,7 +856,10 @@
   }
 
   # Driver Audio
-  Drivers/AudioDxe/AudioDxe.inf
+#  Drivers/AudioDxe/AudioDxe.inf
+  OpenCorePkg/Staging/AudioDxe/AudioDxe.inf
+  OpenCorePkg/Staging/OpenHfsPlus/OpenHfsPlus.inf
+  OpenCorePkg/Platform/ResetNvramEntry/ResetNvramEntry.inf
 
   #
   # Sample Application

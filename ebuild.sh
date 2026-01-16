@@ -832,7 +832,7 @@ MainPostBuildScript() {
 #    fi
 
 
-    binArray=( EnglishDxe OpenRuntime OpenLinuxBoot )
+    binArray=( EnglishDxe OpenRuntime OpenLinuxBoot AudioDxe OpenHfsPlus ResetNvramEntry )
     for efi in "${binArray[@]}"
     do
       copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_UEFI/$efi.efi
@@ -853,7 +853,7 @@ MainPostBuildScript() {
     fi
 
     # drivers64UEFI
-    binArray=( CsmVideoDxe EmuVariableUefi NvmExpressDxe OsxFatBinaryDrv PartitionDxe AudioDxe )
+    binArray=( CsmVideoDxe EmuVariableUefi NvmExpressDxe OsxFatBinaryDrv PartitionDxe )
 
     for efi in "${binArray[@]}"
     do

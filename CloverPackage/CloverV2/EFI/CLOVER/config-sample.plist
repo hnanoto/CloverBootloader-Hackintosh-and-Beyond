@@ -673,7 +673,7 @@
             <key>TextOnly</key>
             <false/>
             <key>Theme</key>
-            <string>cesium</string>
+            <string>embedded</string>
             <key>Timezone</key>
             <integer>3</integer>
         </dict>

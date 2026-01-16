@@ -1,0 +1,14 @@
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = DebugStubLib
+  FILE_GUID                      = 8A9B2C3D-4E5F-6A7B-8C9D-0E1F2A3B4C5D
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = DebugStubLib
+
+[Sources]
+  DebugStub.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec

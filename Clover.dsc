@@ -228,6 +228,7 @@
   OcPeCoffExtLib|OpenCorePkg/Library/OcPeCoffExtLib/OcPeCoffExtLib.inf
   OcMacInfoLib|OpenCorePkg/Library/OcMacInfoLib/OcMacInfoLib.inf
   OcApfsLib|OpenCorePkg/Library/OcApfsLib/OcApfsLib.inf
+  DebugStubLib|Library/DebugStubLib/DebugStubLib.inf
   OcAppleSecureBootLib|OpenCorePkg/Library/OcAppleSecureBootLib/OcAppleSecureBootLib.inf
 #  OcAppleImageVerificationLib|OpenCorePkg/Library/OcAppleImageVerificationLib/OcAppleImageVerificationLib.inf
   OcDriverConnectionLib|OpenCorePkg/Library/OcDriverConnectionLib/OcDriverConnectionLib.inf
@@ -866,15 +867,18 @@
     <LibraryClasses>
       OcMainLib|OpenCorePkg/Library/OcMainLib/OcMainLib.inf
       DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+      NULL|Library/DebugStubLib/DebugStubLib.inf
   }
   OpenCorePkg/Staging/OpenHfsPlus/OpenHfsPlus.inf {
     <LibraryClasses>
       DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+      NULL|Library/DebugStubLib/DebugStubLib.inf
   }
   OpenCorePkg/Platform/ResetNvramEntry/ResetNvramEntry.inf {
     <LibraryClasses>
       OcMainLib|OpenCorePkg/Library/OcMainLib/OcMainLib.inf
       DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+      NULL|Library/DebugStubLib/DebugStubLib.inf
   }
 
   #
@@ -961,6 +965,7 @@ rEFIt_UEFI/refit.inf {
     <LibraryClasses>
       OcMainLib|OpenCorePkg/Library/OcMainLib/OcMainLib.inf
       DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+      NULL|Library/DebugStubLib/DebugStubLib.inf
   }
 
 #!ifdef DEBUG_ON_SERIAL_PORT

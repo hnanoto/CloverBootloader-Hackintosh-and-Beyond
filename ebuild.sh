@@ -832,7 +832,7 @@ MainPostBuildScript() {
 #    fi
 
 
-    binArray=( EnglishDxe OpenRuntime )
+    binArray=( EnglishDxe )
     for efi in "${binArray[@]}"
     do
       copyBin "$BUILD_DIR_ARCH"/$efi.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers/$DRIVERS_UEFI/$efi.efi

@@ -702,12 +702,12 @@
 
   # foreign file system support
   Protocols/DriverOverride/DriverOverride.inf
-  FileSystems/VBoxFsDxe/VBoxHfs.inf
-  FileSystems/VBoxFsDxe/VBoxIso9660.inf
-  #FileSystems/VBoxFsDxe/VBoxFsDxe.inf
-  FileSystems/VBoxFsDxe/VBoxExt2.inf
-  FileSystems/VBoxFsDxe/VBoxExt4.inf
-  FileSystems/VBoxFsDxe/VBoxReiserFS.inf
+#   FileSystems/VBoxFsDxe/VBoxHfs.inf
+#   FileSystems/VBoxFsDxe/VBoxIso9660.inf
+#   #FileSystems/VBoxFsDxe/VBoxFsDxe.inf
+#   FileSystems/VBoxFsDxe/VBoxExt2.inf
+#   FileSystems/VBoxFsDxe/VBoxExt4.inf
+#   FileSystems/VBoxFsDxe/VBoxReiserFS.inf
   #EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
   #OsxMmcDxe/MmcDxe.inf
   FileSystems/FatPkg/EnhancedFatDxe/Fat.inf
@@ -938,6 +938,7 @@ rEFIt_UEFI/refit.inf {
 #  MemoryFix/OsxLowMemFixDrv/OsxLowMemFixDrv.inf
 #  MemoryFix/AptioMemoryFix/AptioMemoryFix.inf
   OpenCorePkg/Platform/OpenRuntime/OpenRuntime.inf
+  OpenCorePkg/Platform/OpenLinuxBoot/OpenLinuxBoot.inf
 
 #!ifdef DEBUG_ON_SERIAL_PORT
 #  MemoryFix/OsxAptioFixDrv/OsxAptioFixDrv.inf {

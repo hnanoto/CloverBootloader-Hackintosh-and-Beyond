@@ -198,6 +198,11 @@
   OcDevicePathLib|OpenCorePkg/Library/OcDevicePathLib/OcDevicePathLib.inf
   OcFileLib|OpenCorePkg/Library/OcFileLib/OcFileLib.inf
   OcFlexArrayLib|OpenCorePkg/Library/OcFlexArrayLib/OcFlexArrayLib.inf
+  OcHdaDevicesLib|OpenCorePkg/Library/OcHdaDevicesLib/OcHdaDevicesLib.inf
+  OcMp3Lib|OpenCorePkg/Library/OcMp3Lib/OcMp3Lib.inf
+  OcWaveLib|OpenCorePkg/Library/OcWaveLib/OcWaveLib.inf
+  OcStringLib|OpenCorePkg/Library/OcStringLib/OcStringLib.inf
+  OcAudioLib|OpenCorePkg/Library/OcAudioLib/OcAudioLib.inf
   OcMainLib|OpenCorePkg/Library/OcMainLib/OcMainLibClover.inf
   OcMemoryLib|OpenCorePkg/Library/OcMemoryLib/OcMemoryLib.inf
 # OcMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf

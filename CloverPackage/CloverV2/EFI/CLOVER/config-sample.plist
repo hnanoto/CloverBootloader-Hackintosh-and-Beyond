@@ -1009,7 +1009,7 @@
             <key>DisableIoMapper</key>
             <true/>
             <key>DisableIoMapperMapping</key>
-            <false/>
+            <true/>
             <key>DisableLinkeditJettison</key>
             <true/>
             <key>DisableSingleUser</key>
@@ -1068,7 +1068,7 @@
             <key>ProtectUefiServices</key>
             <false/>
             <key>ProvideCurrentCpuInfo</key>
-            <false/>
+            <true/>
             <key>ProvideCustomSlide</key>
             <false/>
             <key>ProvideMaxSlide</key>

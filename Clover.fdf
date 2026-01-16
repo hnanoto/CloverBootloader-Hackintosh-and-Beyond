@@ -192,15 +192,15 @@ INF   LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
   #INF  VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
   #INF  VBoxIdeBusDxe/VBoxIdeBusDxe.inf
   #INF  DuetPkg/SataControllerDxe/SataControllerDxe.inf
-  INF  Drivers/SataControllerDxe/SataControllerDxe.inf
+#  INF  Drivers/SataControllerDxe/SataControllerDxe.inf
   #INF  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
-  INF  Drivers/AtaAtapi/AtaAtapiPassThru.inf
+#  INF  Drivers/AtaAtapi/AtaAtapiPassThru.inf
   #INF  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
-  INF  Drivers/AtaBus/AtaBusDxe.inf
+#  INF  Drivers/AtaBus/AtaBusDxe.inf
   #INF  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
-  INF  Drivers/DVDBus/ScsiBusDxe.inf
+#  INF  Drivers/DVDBus/ScsiBusDxe.inf
   #INF  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
-  INF  Drivers/DVDDisk/ScsiDiskDxe.inf
+#  INF  Drivers/DVDDisk/ScsiDiskDxe.inf
   #INF  IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
   INF  MdeModulePkg/Bus/Pci/NvmExpressDxe/NvmExpressDxe.inf
 !endif  
@@ -217,18 +217,18 @@ INF   LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
 !endif
 
 !ifdef ENABLE_USB_OHCI
-  INF  Drivers/OhciDxe/OhciDxe.inf
+#  INF  Drivers/OhciDxe/OhciDxe.inf
 !endif
 !ifdef ENABLE_USB_XHCI
   #INF  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
-  INF  Drivers/XhciDxe/XhciDxe.inf
+#  INF  Drivers/XhciDxe/XhciDxe.inf
 !endif
 
   #INF  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
-  INF  Drivers/UsbBusDxe/UsbBusDxe.inf
+#  INF  Drivers/UsbBusDxe/UsbBusDxe.inf
   #INF  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
-  INF  Drivers/UsbKbDxe/UsbKbDxe.inf
-  INF  MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
+#  INF  Drivers/UsbKbDxe/UsbKbDxe.inf
+#  INF  MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
 !ifndef DISABLE_USB_MASS_STORAGE  
   INF  MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
 !endif  
@@ -237,7 +237,7 @@ INF   LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
 
     # ISA Support
 INF  PcAtChipsetPkg/IsaAcpiDxe/IsaAcpi.inf
-INF  Drivers/Isa/IsaBusDxe/IsaBusDxe.inf
+#INF  Drivers/Isa/IsaBusDxe/IsaBusDxe.inf
 #INF  Drivers/Isa/IsaSerialDxe/IsaSerialDxe.inf
 #INF  Drivers/Isa/Ps2KeyboardDxe/Ps2keyboardDxe.inf
 #INF  Drivers/Isa/IsaFloppyDxe/IsaFloppyDxe.inf
@@ -245,7 +245,7 @@ INF  Drivers/Isa/IsaBusDxe/IsaBusDxe.inf
 INF  MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
 INF  MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
 #INF  MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
-INF  Drivers/PartitionDxe/PartitionDxe.inf
+#INF  Drivers/PartitionDxe/PartitionDxe.inf
 
     # ACPI Support
 #INF  MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf

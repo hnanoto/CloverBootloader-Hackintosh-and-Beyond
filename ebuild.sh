@@ -853,7 +853,7 @@ MainPostBuildScript() {
     fi
 
     # drivers64UEFI
-    binArray=( CsmVideoDxe EmuVariableUefi NvmExpressDxe OsxFatBinaryDrv PartitionDxe )
+    binArray=( CsmVideoDxe EmuVariableUefi NvmExpressDxe OsxFatBinaryDrv PartitionDxe AudioDxe )
 
     for efi in "${binArray[@]}"
     do

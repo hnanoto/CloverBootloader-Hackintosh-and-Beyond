@@ -862,7 +862,7 @@
   }
 
   # Driver Audio
-#  Drivers/AudioDxe/AudioDxe.inf
+  Drivers/AudioDxe/AudioDxe.inf
 
   #
   # Sample Application
@@ -882,6 +882,7 @@
   ShellPkg/Application/Shell/Shell.inf {
     <PcdsFixedAtBuild>
     gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0xFF
+    gEfiShellPkgTokenSpaceGuid.PcdDebugPrintErrorLevel|16000
     gEfiShellPkgTokenSpaceGuid.PcdShellLibAutoInitialize|FALSE
     gEfiMdePkgTokenSpaceGuid.PcdUefiLibMaxPrintBufferSize|16000
   !ifdef $(NO_SHELL_PROFILES)

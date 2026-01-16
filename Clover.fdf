@@ -136,7 +136,7 @@ INF  FileSystems/GrubFS/src/EXFAT.inf
 !if $(USE_APPLE_HFSPLUS_DRIVER) AND ( $(ARCH) == X64 )
 INF  RuleOverride=BINARY FileSystems/HFSPlus/HFSPlus.inf
 !else
-INF  FileSystems/VBoxFsDxe/VBoxHfs.inf
+#INF  FileSystems/VBoxFsDxe/VBoxHfs.inf
 !endif
 
 INF  PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
@@ -180,7 +180,7 @@ INF   LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
 
     # IDE/AHCI Support
 !ifdef USE_BIOS_BLOCKIO
-  INF  LegacyBios/BlockIoDxe/BlockIoDxe.inf
+#   INF  LegacyBios/BlockIoDxe/BlockIoDxe.inf
 !ifdef DISABLE_USB_CONTROLLERS_WHEN_BLOCKIO
   DEFINE DISABLE_USB_CONTROLLERS = 1
 !endif

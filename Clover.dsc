@@ -863,23 +863,6 @@
 
   # Driver Audio
 #  Drivers/AudioDxe/AudioDxe.inf
-  OpenCorePkg/Staging/AudioDxe/AudioDxe.inf {
-    <LibraryClasses>
-      OcMainLib|OpenCorePkg/Library/OcMainLib/OcMainLib.inf
-      DebugLib|OpenCorePkg/Library/OcDebugLibNull/OcDebugLibNull.inf
-      NULL|Library/DebugStubLib/DebugStubLib.inf
-  }
-  OpenCorePkg/Staging/OpenHfsPlus/OpenHfsPlus.inf {
-    <LibraryClasses>
-      DebugLib|OpenCorePkg/Library/OcDebugLibNull/OcDebugLibNull.inf
-      NULL|Library/DebugStubLib/DebugStubLib.inf
-  }
-  OpenCorePkg/Platform/ResetNvramEntry/ResetNvramEntry.inf {
-    <LibraryClasses>
-      OcMainLib|OpenCorePkg/Library/OcMainLib/OcMainLib.inf
-      DebugLib|OpenCorePkg/Library/OcDebugLibNull/OcDebugLibNull.inf
-      NULL|Library/DebugStubLib/DebugStubLib.inf
-  }
 
   #
   # Sample Application
@@ -961,12 +944,6 @@ rEFIt_UEFI/refit.inf {
 #  MemoryFix/OsxLowMemFixDrv/OsxLowMemFixDrv.inf
 #  MemoryFix/AptioMemoryFix/AptioMemoryFix.inf
   OpenCorePkg/Platform/OpenRuntime/OpenRuntime.inf
-  OpenCorePkg/Platform/OpenLinuxBoot/OpenLinuxBoot.inf {
-    <LibraryClasses>
-      OcMainLib|OpenCorePkg/Library/OcMainLib/OcMainLib.inf
-      DebugLib|OpenCorePkg/Library/OcDebugLibNull/OcDebugLibNull.inf
-      NULL|Library/DebugStubLib/DebugStubLib.inf
-  }
 
 #!ifdef DEBUG_ON_SERIAL_PORT
 #  MemoryFix/OsxAptioFixDrv/OsxAptioFixDrv.inf {

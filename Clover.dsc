@@ -866,18 +866,18 @@
   OpenCorePkg/Staging/AudioDxe/AudioDxe.inf {
     <LibraryClasses>
       OcMainLib|OpenCorePkg/Library/OcMainLib/OcMainLib.inf
-      DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+      DebugLib|OpenCorePkg/Library/OcDebugLibNull/OcDebugLibNull.inf
       NULL|Library/DebugStubLib/DebugStubLib.inf
   }
   OpenCorePkg/Staging/OpenHfsPlus/OpenHfsPlus.inf {
     <LibraryClasses>
-      DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+      DebugLib|OpenCorePkg/Library/OcDebugLibNull/OcDebugLibNull.inf
       NULL|Library/DebugStubLib/DebugStubLib.inf
   }
   OpenCorePkg/Platform/ResetNvramEntry/ResetNvramEntry.inf {
     <LibraryClasses>
       OcMainLib|OpenCorePkg/Library/OcMainLib/OcMainLib.inf
-      DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+      DebugLib|OpenCorePkg/Library/OcDebugLibNull/OcDebugLibNull.inf
       NULL|Library/DebugStubLib/DebugStubLib.inf
   }
 
@@ -964,7 +964,7 @@ rEFIt_UEFI/refit.inf {
   OpenCorePkg/Platform/OpenLinuxBoot/OpenLinuxBoot.inf {
     <LibraryClasses>
       OcMainLib|OpenCorePkg/Library/OcMainLib/OcMainLib.inf
-      DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
+      DebugLib|OpenCorePkg/Library/OcDebugLibNull/OcDebugLibNull.inf
       NULL|Library/DebugStubLib/DebugStubLib.inf
   }
 

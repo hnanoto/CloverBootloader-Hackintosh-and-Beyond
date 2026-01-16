@@ -632,7 +632,7 @@
             <key>CustomIcons?</key>
             <false/>
             <key>EmbeddedThemeType</key>
-            <string>Daytime</string>
+            <string>Dark</string>
             <key>Hide?</key>
             <array>
                 <string>Windows</string>

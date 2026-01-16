@@ -713,18 +713,18 @@
   FileSystems/FatPkg/EnhancedFatDxe/Fat.inf
   FileSystems/ApfsDriverLoader/ApfsDriverLoader.inf
   # FS from grub
-!ifndef NO_GRUB_DRIVERS
-  FileSystems/GrubFS/src/EXFAT.inf
-  FileSystems/GrubFS/src/HFSPLUS.inf
-  FileSystems/GrubFS/src/ISO9660.inf
-  FileSystems/GrubFS/src/NTFS.inf
-  FileSystems/GrubFS/src/UDF.inf
-  # FileSystems/GrubFS/src/ZFS.inf
-  FileSystems/GrubFS/src/EXT2.inf
-  FileSystems/GrubFS/src/UFS.inf
-  FileSystems/GrubFS/src/UFS2.inf
-  # FileSystems/GrubFS/src/XFS.inf
-!endif
+# !ifndef NO_GRUB_DRIVERS
+#   FileSystems/GrubFS/src/EXFAT.inf
+#   FileSystems/GrubFS/src/HFSPLUS.inf
+#   FileSystems/GrubFS/src/ISO9660.inf
+#   FileSystems/GrubFS/src/NTFS.inf
+#   FileSystems/GrubFS/src/UDF.inf
+#   # FileSystems/GrubFS/src/ZFS.inf
+#   FileSystems/GrubFS/src/EXT2.inf
+#   FileSystems/GrubFS/src/UFS.inf
+#   FileSystems/GrubFS/src/UFS2.inf
+#   # FileSystems/GrubFS/src/XFS.inf
+# !endif
   Ext4Pkg/Ext4Dxe/Ext4Dxe.inf
 
   #Video
@@ -736,27 +736,27 @@
   #DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
   CloverEFI/BiosVideo/BiosVideo.inf
   #BiosVideoAuto/BiosVideo.inf
-  LegacyBios/VideoDxe/VideoDxe.inf
-  LegacyBios/VideoDxe/VideoDxe2.inf
+#   LegacyBios/VideoDxe/VideoDxe.inf
+#   LegacyBios/VideoDxe/VideoDxe2.inf
 
   # IDE/AHCI Support
-!ifdef USE_BIOS_BLOCKIO
-  LegacyBios/BlockIoDxe/BlockIoDxe.inf
-!else
-  #Trash/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
-  #Trash/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
-  #DuetPkg/SataControllerDxe/SataControllerDxe.inf
-  Drivers/SataControllerDxe/SataControllerDxe.inf
-  #MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
-  Drivers/AtaAtapi/AtaAtapiPassThru.inf
-  #MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
-  Drivers/AtaBus/AtaBusDxe.inf
-  #MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
-  Drivers/DVDBus/ScsiBusDxe.inf
-  #MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
-  Drivers/DVDDisk/ScsiDiskDxe.inf
-  #IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
-!endif
+# !ifdef USE_BIOS_BLOCKIO
+#   LegacyBios/BlockIoDxe/BlockIoDxe.inf
+# !else
+#   #Trash/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
+#   #Trash/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
+#   #DuetPkg/SataControllerDxe/SataControllerDxe.inf
+#   Drivers/SataControllerDxe/SataControllerDxe.inf
+#   #MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
+#   Drivers/AtaAtapi/AtaAtapiPassThru.inf
+#   #MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+#   Drivers/AtaBus/AtaBusDxe.inf
+#   #MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
+#   Drivers/DVDBus/ScsiBusDxe.inf
+#   #MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
+#   Drivers/DVDDisk/ScsiDiskDxe.inf
+#   #IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
+# !endif
 
   # Usb Support
   MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf

@@ -291,7 +291,7 @@ void HardwareValidator::IncrementBootFailCount() {
   FailCount++;
 
   EFI_STATUS Status = gRT->SetVariable(
-      CLOVER_BOOT_FAIL_COUNT_VAR, &gEfiAppleBootGuid,
+      CLOVER_BOOT_FAIL_COUNT_VAR, gEfiAppleBootGuid,
       EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS |
           EFI_VARIABLE_RUNTIME_ACCESS,
       sizeof(UINT32), &FailCount);
@@ -310,7 +310,7 @@ UINT32 HardwareValidator::GetBootFailCount() {
   UINTN Size = sizeof(UINT32);
 
   EFI_STATUS Status = gRT->GetVariable(
-      CLOVER_BOOT_FAIL_COUNT_VAR, &gEfiAppleBootGuid, NULL, &Size, &FailCount);
+      CLOVER_BOOT_FAIL_COUNT_VAR, gEfiAppleBootGuid, NULL, &Size, &FailCount);
 
   if (EFI_ERROR(Status)) {
     // Variable doesn't exist or error reading - assume 0
@@ -324,7 +324,7 @@ void HardwareValidator::ResetBootFailCount() {
   UINT32 FailCount = 0;
 
   EFI_STATUS Status = gRT->SetVariable(
-      CLOVER_BOOT_FAIL_COUNT_VAR, &gEfiAppleBootGuid,
+      CLOVER_BOOT_FAIL_COUNT_VAR, gEfiAppleBootGuid,
       EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS |
           EFI_VARIABLE_RUNTIME_ACCESS,
       sizeof(UINT32), &FailCount);

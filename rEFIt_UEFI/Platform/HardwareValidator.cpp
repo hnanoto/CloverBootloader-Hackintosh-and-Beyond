@@ -16,8 +16,6 @@
 #define PCI_CLASS_NETWORK 0x02
 #define PCI_SUBCLASS_NETWORK_OTHER 0x80
 
-extern "C" EFI_GUID gEfiPciIoProtocolGuid;
-
 void HardwareValidator::ValidateHardware(const XString8Array &LoadedKexts) {
   // Global validation entry point
   CheckIntelWifi(LoadedKexts);
@@ -26,7 +24,7 @@ void HardwareValidator::ValidateHardware(const XString8Array &LoadedKexts) {
 bool HardwareValidator::IsKextLoaded(const XString8Array &LoadedKexts,
                                      const XString8 &KextName) {
   for (size_t i = 0; i < LoadedKexts.size(); ++i) {
-    if (LoadedKexts[i].IC().contains(KextName)) {
+    if (LoadedKexts[i].containsIC(KextName)) {
       return true;
     }
   }
@@ -39,10 +37,8 @@ void HardwareValidator::CheckIntelWifi(const XString8Array &LoadedKexts) {
   EFI_HANDLE *HandleBuffer;
 
   // Get all PciIo handles
-  Status = gBS->LocateHandleBuffer(
-      ByProtocol,
-      gEfiPciIoProtocolGuid, // Pass by reference (C++ wrapper expectation)
-      NULL, &HandleCount, &HandleBuffer);
+  Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiPciIoProtocolGuid, NULL,
+                                   &HandleCount, &HandleBuffer);
 
   if (EFI_ERROR(Status))
     return;
@@ -51,8 +47,7 @@ void HardwareValidator::CheckIntelWifi(const XString8Array &LoadedKexts) {
 
   for (UINTN i = 0; i < HandleCount; ++i) {
     EFI_PCI_IO_PROTOCOL *PciIo;
-    Status = gBS->OpenProtocol(HandleBuffer[i],
-                               gEfiPciIoProtocolGuid, // Pass by reference
+    Status = gBS->OpenProtocol(HandleBuffer[i], &gEfiPciIoProtocolGuid,
                                (VOID **)&PciIo, gImageHandle, NULL,
                                EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 
@@ -74,8 +69,8 @@ void HardwareValidator::CheckIntelWifi(const XString8Array &LoadedKexts) {
         }
       }
     }
-    gBS->CloseProtocol(HandleBuffer[i], gEfiPciIoProtocolGuid, gImageHandle,
-                       NULL); // Pass by reference
+    gBS->CloseProtocol(HandleBuffer[i], &gEfiPciIoProtocolGuid, gImageHandle,
+                       NULL);
   }
 
   if (HandleBuffer) {

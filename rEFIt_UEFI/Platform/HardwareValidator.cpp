@@ -39,8 +39,10 @@ void HardwareValidator::CheckIntelWifi(const XString8Array &LoadedKexts) {
   EFI_HANDLE *HandleBuffer;
 
   // Get all PciIo handles
-  Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiPciIoProtocolGuid, NULL,
-                                   &HandleCount, &HandleBuffer);
+  Status = gBS->LocateHandleBuffer(
+      ByProtocol,
+      gEfiPciIoProtocolGuid, // Pass by reference (C++ wrapper expectation)
+      NULL, &HandleCount, &HandleBuffer);
 
   if (EFI_ERROR(Status))
     return;
@@ -49,7 +51,8 @@ void HardwareValidator::CheckIntelWifi(const XString8Array &LoadedKexts) {
 
   for (UINTN i = 0; i < HandleCount; ++i) {
     EFI_PCI_IO_PROTOCOL *PciIo;
-    Status = gBS->OpenProtocol(HandleBuffer[i], &gEfiPciIoProtocolGuid,
+    Status = gBS->OpenProtocol(HandleBuffer[i],
+                               gEfiPciIoProtocolGuid, // Pass by reference
                                (VOID **)&PciIo, gImageHandle, NULL,
                                EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 
@@ -71,8 +74,8 @@ void HardwareValidator::CheckIntelWifi(const XString8Array &LoadedKexts) {
         }
       }
     }
-    gBS->CloseProtocol(HandleBuffer[i], &gEfiPciIoProtocolGuid, gImageHandle,
-                       NULL);
+    gBS->CloseProtocol(HandleBuffer[i], gEfiPciIoProtocolGuid, gImageHandle,
+                       NULL); // Pass by reference
   }
 
   if (HandleBuffer) {

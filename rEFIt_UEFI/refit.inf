@@ -245,6 +245,8 @@
   Platform/hda.h
   Platform/HdaCodecDump.cpp
   Platform/HdaCodecDump.h
+  Platform/HardwareValidator.cpp
+  Platform/HardwareValidator.h
   Platform/Hibernate.cpp
   Platform/Hibernate.h
   Platform/Injectors.cpp

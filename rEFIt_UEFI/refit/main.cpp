@@ -51,6 +51,7 @@
 #include "../Platform/DataHubCpu.h"
 #include "../Platform/Edid.h"
 #include "../Platform/Events.h"
+#include "../Platform/HardwareValidator.h"
 #include "../Platform/Hibernate.h"
 #include "../Platform/Injectors.h"
 #include "../Platform/KextList.h"
@@ -3801,6 +3802,15 @@ DBG("strlen '<' =%ld or %lld\n", L_STR_LEN("<"), AsciiStrLen("<"));
 #ifdef JIEF_DEBUG
         displayFreeMemory("Before RunMainMenu"_XS8);
 #endif
+        // Hardware validation: check if detected hardware has appropriate kexts
+        // loaded
+        {
+          XString8Array LoadedKextNames;
+          for (size_t i = 0; i < InjectKextList.size(); ++i) {
+            LoadedKextNames.Add(InjectKextList[i].FileName);
+          }
+          HardwareValidator::ValidateHardware(LoadedKextNames);
+        }
         MenuExit = MainMenu.RunMainMenu(DefaultIndex, &ChosenEntry);
       }
       //      DBG("exit from MainMenu %llu  ChosenEntry=%zu\n", MenuExit,

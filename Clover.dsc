@@ -944,7 +944,7 @@ rEFIt_UEFI/refit.inf {
 #  MemoryFix/OsxAptioFixDrv/OsxAptioFix3Drv.inf
 #  MemoryFix/OsxLowMemFixDrv/OsxLowMemFixDrv.inf
 #  MemoryFix/AptioMemoryFix/AptioMemoryFix.inf
-#  OpenCorePkg/Platform/OpenRuntime/OpenRuntime.inf
+  OpenCorePkg/Platform/OpenRuntime/OpenRuntime.inf
 
 #!ifdef DEBUG_ON_SERIAL_PORT
 #  MemoryFix/OsxAptioFixDrv/OsxAptioFixDrv.inf {

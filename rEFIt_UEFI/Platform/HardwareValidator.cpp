@@ -278,3 +278,105 @@ void HardwareValidator::CheckAMDGPU(const XString8Array &LoadedKexts) {
     }
   }
 }
+
+// ============================================================================
+// PHASE 4: SELF-HEALING / SAFE MODE FUNCTIONS
+// ============================================================================
+
+#define CLOVER_BOOT_FAIL_COUNT_VAR L"CloverBootFailCount"
+#define SAFE_MODE_THRESHOLD 3
+
+void HardwareValidator::IncrementBootFailCount() {
+  UINT32 FailCount = GetBootFailCount();
+  FailCount++;
+
+  EFI_STATUS Status = gRT->SetVariable(
+      CLOVER_BOOT_FAIL_COUNT_VAR, &gEfiAppleBootGuid,
+      EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+          EFI_VARIABLE_RUNTIME_ACCESS,
+      sizeof(UINT32), &FailCount);
+
+  if (EFI_ERROR(Status)) {
+    DebugLog(1, "HardwareValidator: Failed to increment boot fail count: %s\n",
+             efiStrError(Status));
+  } else {
+    DebugLog(1, "HardwareValidator: Boot fail count incremented to %d\n",
+             FailCount);
+  }
+}
+
+UINT32 HardwareValidator::GetBootFailCount() {
+  UINT32 FailCount = 0;
+  UINTN Size = sizeof(UINT32);
+
+  EFI_STATUS Status = gRT->GetVariable(
+      CLOVER_BOOT_FAIL_COUNT_VAR, &gEfiAppleBootGuid, NULL, &Size, &FailCount);
+
+  if (EFI_ERROR(Status)) {
+    // Variable doesn't exist or error reading - assume 0
+    return 0;
+  }
+
+  return FailCount;
+}
+
+void HardwareValidator::ResetBootFailCount() {
+  UINT32 FailCount = 0;
+
+  EFI_STATUS Status = gRT->SetVariable(
+      CLOVER_BOOT_FAIL_COUNT_VAR, &gEfiAppleBootGuid,
+      EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS |
+          EFI_VARIABLE_RUNTIME_ACCESS,
+      sizeof(UINT32), &FailCount);
+
+  if (!EFI_ERROR(Status)) {
+    DebugLog(1, "HardwareValidator: Boot fail count reset to 0\n");
+  }
+}
+
+bool HardwareValidator::ShouldEnterSafeMode() {
+  UINT32 FailCount = GetBootFailCount();
+
+  if (FailCount >= SAFE_MODE_THRESHOLD) {
+    DebugLog(1,
+             "HardwareValidator: [SAFE MODE] Detected %d consecutive boot "
+             "failures!\n",
+             FailCount);
+    return true;
+  }
+
+  return false;
+}
+
+void HardwareValidator::ApplySafeModeSettings() {
+  DebugLog(1,
+           "HardwareValidator: [SAFE MODE] Applying safe boot settings...\n");
+
+  // Force verbose mode for troubleshooting
+  if (!gSettings.Boot.BootArgs.containsIC("-v")) {
+    gSettings.Boot.BootArgs.S8Catf(" -v");
+    DebugLog(1, "HardwareValidator: [SAFE MODE] Enabled verbose mode (-v)\n");
+  }
+
+  // Disable GPU injection to avoid graphics issues
+  gSettings.Graphics.InjectAsDict.InjectIntel = false;
+  gSettings.Graphics.InjectAsDict.InjectATI = false;
+  gSettings.Graphics.InjectAsDict.InjectNVidia = false;
+  DebugLog(1, "HardwareValidator: [SAFE MODE] Disabled GPU injection\n");
+
+  // Disable custom DSDT to avoid ACPI issues
+  gSettings.ACPI.DSDT.DsdtName.setEmpty();
+  DebugLog(1, "HardwareValidator: [SAFE MODE] Disabled custom DSDT\n");
+
+  // Add safe boot flag
+  if (!gSettings.Boot.BootArgs.containsIC("-x")) {
+    gSettings.Boot.BootArgs.S8Catf(" -x");
+    DebugLog(1,
+             "HardwareValidator: [SAFE MODE] Enabled macOS safe boot (-x)\n");
+  }
+
+  DebugLog(1, "HardwareValidator: [SAFE MODE] Safe mode settings applied. "
+              "System will boot with minimal configuration.\n");
+  DebugLog(1, "HardwareValidator: [SAFE MODE] To exit safe mode, delete NVRAM "
+              "variable: nvram -d CloverBootFailCount\n");
+}

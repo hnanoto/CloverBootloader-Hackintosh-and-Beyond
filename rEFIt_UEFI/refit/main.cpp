@@ -3802,6 +3802,14 @@ DBG("strlen '<' =%ld or %lld\n", L_STR_LEN("<"), AsciiStrLen("<"));
 #ifdef JIEF_DEBUG
         displayFreeMemory("Before RunMainMenu"_XS8);
 #endif
+        // Phase 4: Self-Healing - Increment boot attempt counter
+        HardwareValidator::IncrementBootFailCount();
+
+        // Check if we should enter Safe Mode due to repeated boot failures
+        if (HardwareValidator::ShouldEnterSafeMode()) {
+          HardwareValidator::ApplySafeModeSettings();
+        }
+
         // Hardware validation: check if detected hardware has appropriate kexts
         // loaded
         {

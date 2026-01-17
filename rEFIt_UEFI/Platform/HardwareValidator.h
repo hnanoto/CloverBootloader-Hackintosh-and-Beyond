@@ -6,6 +6,7 @@
  *
  *  Purpose: Intelligent hardware detection and configuration validation.
  *           Checks if critical kexts are present for detected hardware.
+ *           Implements self-healing via boot failure detection.
  */
 
 #ifndef __HARDWARE_VALIDATOR_H__
@@ -17,6 +18,13 @@
 class HardwareValidator {
 public:
   static void ValidateHardware(const XString8Array &LoadedKexts);
+
+  // Self-healing / Safe Mode functions
+  static void IncrementBootFailCount();
+  static UINT32 GetBootFailCount();
+  static void ResetBootFailCount();
+  static bool ShouldEnterSafeMode();
+  static void ApplySafeModeSettings();
 
 private:
   // Wi-Fi validation

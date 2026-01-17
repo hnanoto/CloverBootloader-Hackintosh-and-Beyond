@@ -37,6 +37,7 @@ void HardwareValidator::CheckIntelWifi(const XString8Array &LoadedKexts) {
   EFI_HANDLE *HandleBuffer;
 
   // Get all PciIo handles
+  // Note: LocateHandleBuffer uses pointer (&)
   Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiPciIoProtocolGuid, NULL,
                                    &HandleCount, &HandleBuffer);
 
@@ -47,7 +48,8 @@ void HardwareValidator::CheckIntelWifi(const XString8Array &LoadedKexts) {
 
   for (UINTN i = 0; i < HandleCount; ++i) {
     EFI_PCI_IO_PROTOCOL *PciIo;
-    Status = gBS->OpenProtocol(HandleBuffer[i], &gEfiPciIoProtocolGuid,
+    // Note: OpenProtocol in Clover uses reference (no &)
+    Status = gBS->OpenProtocol(HandleBuffer[i], gEfiPciIoProtocolGuid,
                                (VOID **)&PciIo, gImageHandle, NULL,
                                EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 
@@ -69,7 +71,8 @@ void HardwareValidator::CheckIntelWifi(const XString8Array &LoadedKexts) {
         }
       }
     }
-    gBS->CloseProtocol(HandleBuffer[i], &gEfiPciIoProtocolGuid, gImageHandle,
+    // Note: CloseProtocol in Clover uses reference (no &)
+    gBS->CloseProtocol(HandleBuffer[i], gEfiPciIoProtocolGuid, gImageHandle,
                        NULL);
   }
 

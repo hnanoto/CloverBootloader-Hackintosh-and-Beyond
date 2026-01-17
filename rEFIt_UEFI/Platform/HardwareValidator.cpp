@@ -6,9 +6,8 @@
  */
 
 #include "HardwareValidator.h"
-#include "../Include/Efi.h"
-#include "../Platform/Settings.h"
-#include "../libeg/XTheme.h" // For future GUI alerts
+#include "../libeg/XTheme.h"
+#include <Platform.h> // Must be first to define types
 
 // Intel Vendor ID
 #define PCI_VENDOR_INTEL 0x8086
@@ -17,17 +16,17 @@
 #define PCI_CLASS_NETWORK 0x02
 #define PCI_SUBCLASS_NETWORK_OTHER 0x80
 
+extern "C" EFI_GUID gEfiPciIoProtocolGuid;
+
 void HardwareValidator::ValidateHardware(const XString8Array &LoadedKexts) {
   // Global validation entry point
-  // We can add more checks here later (Ethernet, Audio, etc.)
-
   CheckIntelWifi(LoadedKexts);
 }
 
 bool HardwareValidator::IsKextLoaded(const XString8Array &LoadedKexts,
                                      const XString8 &KextName) {
   for (size_t i = 0; i < LoadedKexts.size(); ++i) {
-    if (LoadedKexts[i].IC().contains(KextName.IC())) {
+    if (LoadedKexts[i].IC().contains(KextName)) {
       return true;
     }
   }
@@ -69,11 +68,11 @@ void HardwareValidator::CheckIntelWifi(const XString8Array &LoadedKexts) {
         if (Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK &&
             Pci.Hdr.ClassCode[1] == PCI_SUBCLASS_NETWORK_OTHER) {
           intelWifiFound = true;
-          // We found one, no need to check all if we just want to warn once
-          // But keeping loop if we want detailed logging later
         }
       }
     }
+    gBS->CloseProtocol(HandleBuffer[i], &gEfiPciIoProtocolGuid, gImageHandle,
+                       NULL);
   }
 
   if (HandleBuffer) {
@@ -81,16 +80,13 @@ void HardwareValidator::CheckIntelWifi(const XString8Array &LoadedKexts) {
   }
 
   if (intelWifiFound) {
-    bool kextPresent = IsKextLoaded(LoadedKexts, "AirportItlwm") ||
-                       IsKextLoaded(LoadedKexts, "itlwm");
+    // Explicitly construct XString8 to avoid conversion errors
+    bool kextPresent = IsKextLoaded(LoadedKexts, XString8("AirportItlwm")) ||
+                       IsKextLoaded(LoadedKexts, XString8("itlwm"));
 
     if (!kextPresent) {
-      // ALERT: Hardware found but Driver missing!
-      // For now, print to log. In phase 2, we will show a popup.
       DebugLog(1, "HardwareValidator: [WARNING] Intel Wi-Fi detected but no "
                   "itlwm/AirportItlwm kext loaded!\n");
-      // GlobalConfig.HardwareWarnings.Add("Intel Wi-Fi found, but kext
-      // missing.");
     } else {
       DebugLog(
           1,

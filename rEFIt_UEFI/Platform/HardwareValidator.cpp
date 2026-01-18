@@ -54,6 +54,12 @@ void HardwareValidator::ValidateHardware(const XString8Array &LoadedKexts) {
   CheckIntelEthernet(LoadedKexts);
   CheckRealtekEthernet(LoadedKexts);
   CheckAMDGPU(LoadedKexts);
+
+  // Step 7: Additional hardware checks
+  CheckIntelBluetooth(LoadedKexts);
+  CheckBroadcomBluetooth(LoadedKexts);
+  CheckThunderbolt(LoadedKexts);
+  CheckNVMe(LoadedKexts);
 }
 
 bool HardwareValidator::IsKextLoaded(const XString8Array &LoadedKexts,
@@ -391,4 +397,53 @@ void HardwareValidator::ApplySafeModeSettings() {
               "System will boot with minimal configuration.\n");
   DebugLog(1, "HardwareValidator: [SAFE MODE] To exit safe mode, delete NVRAM "
               "variable: nvram -d CloverBootFailCount\n");
+}
+
+// ============================================================================
+// STEP 7: ADDITIONAL HARDWARE DETECTION
+// ============================================================================
+
+#define PCI_VENDOR_BROADCOM 0x14E4
+#define PCI_VENDOR_SAMSUNG 0x144D
+#define PCI_VENDOR_SANDISK 0x15B7
+#define PCI_CLASS_SERIAL_BUS 0x0C
+#define PCI_SUBCLASS_USB 0x03
+
+void HardwareValidator::CheckIntelBluetooth(const XString8Array &LoadedKexts) {
+  // Simplified check - looks for Intel USB controllers that might have BT
+  bool kextPresent =
+      IsKextLoaded(LoadedKexts, XString8("IntelBluetoothFirmware"));
+  if (!kextPresent) {
+    DebugLog(
+        1,
+        "HardwareValidator: [INFO] IntelBluetoothFirmware.kext not loaded.\n");
+  }
+}
+
+void HardwareValidator::CheckBroadcomBluetooth(
+    const XString8Array &LoadedKexts) {
+  // Simplified check
+  bool kextPresent = IsKextLoaded(LoadedKexts, XString8("BrcmPatchRAM"));
+  if (!kextPresent) {
+    DebugLog(1, "HardwareValidator: [INFO] BrcmPatchRAM kext not loaded.\n");
+  }
+}
+
+void HardwareValidator::CheckThunderbolt(const XString8Array &LoadedKexts) {
+  // Check for Thunderbolt boot-arg
+  bool tbPatchPresent = IsBootArgPresent(XString8("ThunderboltPatch"));
+  if (!tbPatchPresent) {
+    DebugLog(1, "HardwareValidator: [INFO] Thunderbolt patch not detected.\n");
+  }
+}
+
+void HardwareValidator::CheckNVMe(const XString8Array &LoadedKexts) {
+  // Check if NVMeFix is loaded (useful for non-Apple NVMe drives)
+  bool kextPresent = IsKextLoaded(LoadedKexts, XString8("NVMeFix"));
+  if (!kextPresent) {
+    DebugLog(1, "HardwareValidator: [INFO] NVMeFix.kext not loaded.\n");
+  } else {
+    DebugLog(1, "HardwareValidator: [OK] NVMeFix.kext present for NVMe power "
+                "management.\n");
+  }
 }

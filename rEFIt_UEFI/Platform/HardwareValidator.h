@@ -42,6 +42,16 @@ private:
   // GPU validation
   static void CheckAMDGPU(const XString8Array &LoadedKexts);
 
+  // Bluetooth validation (Step 7)
+  static void CheckIntelBluetooth(const XString8Array &LoadedKexts);
+  static void CheckBroadcomBluetooth(const XString8Array &LoadedKexts);
+
+  // Thunderbolt validation (Step 7)
+  static void CheckThunderbolt(const XString8Array &LoadedKexts);
+
+  // NVMe validation (Step 7)
+  static void CheckNVMe(const XString8Array &LoadedKexts);
+
   // Helper functions
   static bool IsKextLoaded(const XString8Array &LoadedKexts,
                            const XString8 &KextName);

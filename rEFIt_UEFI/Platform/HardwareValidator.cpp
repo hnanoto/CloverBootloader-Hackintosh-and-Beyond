@@ -118,7 +118,7 @@ void HardwareValidator::CheckIntelWifi(const XString8Array &LoadedKexts) {
                        IsKextLoaded(LoadedKexts, XString8("itlwm"));
 
     if (!kextPresent) {
-      AddWarning("Intel Wi-Fi: Missing itlwm/AirportItlwm kext");
+      AddWarning(XString8("Intel Wi-Fi: Missing itlwm/AirportItlwm kext"));
     } else {
       DebugLog(
           1,
@@ -176,8 +176,8 @@ void HardwareValidator::CheckIntelEthernet(const XString8Array &LoadedKexts) {
     bool bootArgPresent = IsBootArgPresent(XString8("e1000=0"));
 
     if (!bootArgPresent) {
-      AddWarning(
-          "Intel I225-V: Missing boot-arg 'e1000=0' (required for macOS 12+)");
+      AddWarning(XString8(
+          "Intel I225-V: Missing boot-arg 'e1000=0' (required for macOS 12+)"));
     } else {
       DebugLog(1, "HardwareValidator: [OK] Intel I225-V detected with correct "
                   "boot-arg.\n");
@@ -230,7 +230,7 @@ void HardwareValidator::CheckRealtekEthernet(const XString8Array &LoadedKexts) {
         IsKextLoaded(LoadedKexts, XString8("LucyRTL8125Ethernet"));
 
     if (!kextPresent) {
-      AddWarning("Realtek RTL8125: Missing LucyRTL8125Ethernet.kext");
+      AddWarning(XString8("Realtek RTL8125: Missing LucyRTL8125Ethernet.kext"));
     } else {
       DebugLog(1, "HardwareValidator: [OK] Realtek RTL8125 detected and driver "
                   "present.\n");
@@ -282,7 +282,8 @@ void HardwareValidator::CheckAMDGPU(const XString8Array &LoadedKexts) {
     bool kextPresent = IsKextLoaded(LoadedKexts, XString8("WhateverGreen"));
 
     if (!kextPresent) {
-      AddWarning("AMD GPU: Missing WhateverGreen.kext (graphics may fail)");
+      AddWarning(
+          XString8("AMD GPU: Missing WhateverGreen.kext (graphics may fail)"));
     } else {
       DebugLog(1, "HardwareValidator: [OK] AMD GPU detected and "
                   "WhateverGreen.kext present.\n");

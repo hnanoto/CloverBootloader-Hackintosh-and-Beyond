@@ -3818,6 +3818,13 @@ DBG("strlen '<' =%ld or %lld\n", L_STR_LEN("<"), AsciiStrLen("<"));
             LoadedKextNames.Add(InjectKextList[i].FileName);
           }
           HardwareValidator::ValidateHardware(LoadedKextNames);
+
+          // Step 8: Check if previous boot was successful and reset counter if
+          // needed
+          HardwareValidator::CheckAndResetIfLastBootSuccessful();
+
+          // Step 8: Generate HTML report if enabled
+          HardwareValidator::GenerateHTMLReport();
         }
         MenuExit = MainMenu.RunMainMenu(DefaultIndex, &ChosenEntry);
       }

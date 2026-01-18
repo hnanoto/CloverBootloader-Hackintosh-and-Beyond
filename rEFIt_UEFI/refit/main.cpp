@@ -149,6 +149,7 @@ XStringW OpenRuntimeEfiName;
 
 extern void HelpRefit(void);
 extern void AboutRefit(void);
+extern void HardwareStatusRefit(void);
 extern EFI_AUDIO_IO_PROTOCOL *AudioIo;
 extern EFI_DXE_SERVICES *gDS;
 
@@ -3741,6 +3742,13 @@ DBG("strlen '<' =%ld or %lld\n", L_STR_LEN("<"), AsciiStrLen("<"));
         MenuEntryAbout.ShortcutLetter = 0x00;
       MainMenu.AddMenuEntry(&MenuEntryAbout, false);
 
+      // Hardware Status menu entry
+      MenuEntryHardwareStatus.Image =
+          ThemeX->GetIcon((INTN)BUILTIN_ICON_FUNC_ABOUT);
+      if (gSettings.Boot.DisableCloverHotkeys)
+        MenuEntryHardwareStatus.ShortcutLetter = 0x00;
+      MainMenu.AddMenuEntry(&MenuEntryHardwareStatus, false);
+
       if (!(ThemeX->HideUIFlags & HIDEUI_FLAG_FUNCS) ||
           MainMenu.Entries.size() == 0) {
         if (gSettings.Boot.DisableCloverHotkeys)
@@ -3935,6 +3943,11 @@ DBG("strlen '<' =%ld or %lld\n", L_STR_LEN("<"), AsciiStrLen("<"));
       }
       if (ChosenEntry->getREFIT_MENU_ITEM_ABOUT()) { // About rEFIt
         AboutRefit();
+      }
+
+      // Hardware Status handler
+      if (ChosenEntry == &MenuEntryHardwareStatus) {
+        HardwareStatusRefit();
       }
 
       /* -- not passed here

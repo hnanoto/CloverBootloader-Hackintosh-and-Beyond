@@ -400,6 +400,158 @@ void HardwareValidator::ApplySafeModeSettings() {
 }
 
 // ============================================================================
+// STEP 8: AUTO-RESET & HTML REPORT GENERATION
+// ============================================================================
+
+#define BOOT_SUCCESS_MARKER_PATH L"\\EFI\\CLOVER\\misc\\boot_success.flag"
+#define HTML_REPORT_PATH L"\\EFI\\CLOVER\\misc\\hardware_report.html"
+
+void HardwareValidator::CheckAndResetIfLastBootSuccessful() {
+  if (WasLastBootSuccessful()) {
+    DebugLog(1,
+             "HardwareValidator: [AUTO-RESET] Previous boot was successful.\n");
+    ResetBootFailCount();
+    DebugLog(1, "HardwareValidator: [AUTO-RESET] Boot fail counter has been "
+                "reset to 0.\n");
+  }
+}
+
+bool HardwareValidator::WasLastBootSuccessful() {
+  // Check if boot success marker file exists
+  // This file is created by the OS after successful boot
+  // For now, we'll use a simplified approach: if counter hasn't changed in a
+  // while, assume success
+
+  // TODO: Implement file-based detection when EFI file I/O is available
+  // For now, return false to maintain current behavior
+  return false;
+}
+
+void HardwareValidator::MarkBootSuccess() {
+  // This would be called from the OS side or via a boot success hook
+  // For now, it's a placeholder for future implementation
+  DebugLog(1, "HardwareValidator: [AUTO-RESET] Marking boot as successful.\n");
+}
+
+bool HardwareValidator::IsReportEnabled() {
+  // Check if HTML report generation is enabled in config.plist
+  // For now, default to true
+  // TODO: Add config.plist option: HardwareValidator -> GenerateReport
+  return true;
+}
+
+void HardwareValidator::GenerateHTMLReport() {
+  if (!IsReportEnabled()) {
+    return;
+  }
+
+  DebugLog(1, "HardwareValidator: [REPORT] Generating HTML report...\n");
+
+  // Build HTML content
+  XString8 htmlContent;
+
+  htmlContent = "<!DOCTYPE html>\n"
+                "<html>\n"
+                "<head>\n"
+                "  <meta charset=\"UTF-8\">\n"
+                "  <title>Clover Hardware Validator Report</title>\n"
+                "  <style>\n"
+                "    body { font-family: 'Segoe UI', Arial, sans-serif; "
+                "background: #1e1e1e; color: #e0e0e0; margin: 20px; }\n"
+                "    h1 { color: #4caf50; border-bottom: 2px solid #4caf50; "
+                "padding-bottom: 10px; }\n"
+                "    h2 { color: #2196f3; margin-top: 30px; }\n"
+                "    .ok { color: #4caf50; }\n"
+                "    .warning { color: #ff9800; }\n"
+                "    .error { color: #f44336; }\n"
+                "    .info { color: #2196f3; }\n"
+                "    ul { list-style-type: none; padding-left: 0; }\n"
+                "    li { padding: 8px; margin: 5px 0; background: #2a2a2a; "
+                "border-left: 4px solid #4caf50; }\n"
+                "    li.warning { border-left-color: #ff9800; }\n"
+                "    li.error { border-left-color: #f44336; }\n"
+                "    .timestamp { color: #888; font-size: 0.9em; }\n"
+                "    .counter { font-size: 1.2em; font-weight: bold; }\n"
+                "  </style>\n"
+                "</head>\n"
+                "<body>\n"
+                "  <h1>🍀 Clover Híbrido - Hardware Validator Report</h1>\n"
+                "  <p class=\"timestamp\">Generated: Boot Session</p>\n"
+                "  \n"
+                "  <h2>🛡️ Self-Healing Status</h2>\n"
+                "  <ul>\n";
+
+  // Add boot fail counter status
+  UINT32 failCount = GetBootFailCount();
+  if (failCount == 0) {
+    htmlContent.S8Catf("    <li class=\"ok\">Boot Fail Counter: <span "
+                       "class=\"counter\">%d</span> (Normal)</li>\n",
+                       failCount);
+  } else if (failCount < SAFE_MODE_THRESHOLD) {
+    htmlContent.S8Catf("    <li class=\"warning\">Boot Fail Counter: <span "
+                       "class=\"counter\">%d</span> (Warning)</li>\n",
+                       failCount);
+  } else {
+    htmlContent.S8Catf("    <li class=\"error\">Boot Fail Counter: <span "
+                       "class=\"counter\">%d</span> (Safe Mode Active!)</li>\n",
+                       failCount);
+  }
+
+  // Add Safe Mode status
+  if (ShouldEnterSafeMode()) {
+    htmlContent +=
+        "    <li class=\"error\">Safe Mode: <strong>ACTIVE</strong></li>\n";
+  } else {
+    htmlContent += "    <li class=\"ok\">Safe Mode: Inactive</li>\n";
+  }
+
+  htmlContent += "  </ul>\n";
+
+  // Add warnings section
+  if (HasWarnings()) {
+    htmlContent += "  \n  <h2>⚠️ Hardware Warnings</h2>\n  <ul>\n";
+
+    XString8Array warnings = GetWarnings();
+    for (size_t i = 0; i < warnings.size(); ++i) {
+      htmlContent.S8Catf("    <li class=\"warning\">%s</li>\n",
+                         warnings[i].c_str());
+    }
+
+    htmlContent += "  </ul>\n";
+  } else {
+    htmlContent += "  \n  <h2>✅ Hardware Status</h2>\n";
+    htmlContent += "  <p class=\"ok\">All detected hardware has appropriate "
+                   "drivers/configuration.</p>\n";
+  }
+
+  // Add footer
+  htmlContent +=
+      "  \n  <h2>ℹ️ Information</h2>\n"
+      "  <ul>\n"
+      "    <li class=\"info\">Report Location: "
+      "/EFI/CLOVER/misc/hardware_report.html</li>\n"
+      "    <li class=\"info\">To disable this report, edit config.plist</li>\n"
+      "    <li class=\"info\">To reset boot counter manually: nvram -d "
+      "CloverBootFailCount</li>\n"
+      "  </ul>\n"
+      "  \n"
+      "  <p class=\"timestamp\">Clover Híbrido Inteligente - Build #140</p>\n"
+      "</body>\n"
+      "</html>\n";
+
+  // TODO: Write HTML content to file
+  // This requires EFI file I/O which needs to be implemented
+  // For now, just log that we would generate the report
+
+  DebugLog(
+      1,
+      "HardwareValidator: [REPORT] HTML report content prepared (%lld bytes)\n",
+      htmlContent.length());
+  DebugLog(1, "HardwareValidator: [REPORT] Report would be saved to: %ls\n",
+           HTML_REPORT_PATH);
+}
+
+// ============================================================================
 // STEP 7: ADDITIONAL HARDWARE DETECTION
 // ============================================================================
 

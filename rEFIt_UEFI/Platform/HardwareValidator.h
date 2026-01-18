@@ -26,6 +26,15 @@ public:
   static bool ShouldEnterSafeMode();
   static void ApplySafeModeSettings();
 
+  // Auto-reset functions (Step 8)
+  static void CheckAndResetIfLastBootSuccessful();
+  static void MarkBootSuccess();
+  static bool WasLastBootSuccessful();
+
+  // HTML Report generation (Step 8)
+  static void GenerateHTMLReport();
+  static bool IsReportEnabled();
+
   // GUI Warning system
   static XString8Array GetWarnings();
   static void ClearWarnings();

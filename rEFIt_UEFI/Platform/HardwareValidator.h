@@ -26,6 +26,11 @@ public:
   static bool ShouldEnterSafeMode();
   static void ApplySafeModeSettings();
 
+  // GUI Warning system
+  static XString8Array GetWarnings();
+  static void ClearWarnings();
+  static bool HasWarnings();
+
 private:
   // Wi-Fi validation
   static void CheckIntelWifi(const XString8Array &LoadedKexts);
@@ -41,6 +46,10 @@ private:
   static bool IsKextLoaded(const XString8Array &LoadedKexts,
                            const XString8 &KextName);
   static bool IsBootArgPresent(const XString8 &BootArg);
+  static void AddWarning(const XString8 &Warning);
+
+  // Warning storage
+  static XString8Array Warnings;
 };
 
 #endif

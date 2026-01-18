@@ -30,7 +30,25 @@
 #define PCI_SUBCLASS_NETWORK_ETHERNET 0x00
 #define PCI_SUBCLASS_NETWORK_OTHER 0x80
 
+// Static warning storage
+XString8Array HardwareValidator::Warnings;
+
+// Warning management functions
+void HardwareValidator::AddWarning(const XString8 &Warning) {
+  Warnings.Add(Warning);
+  DebugLog(1, "HardwareValidator: [WARNING] %s\n", Warning.c_str());
+}
+
+XString8Array HardwareValidator::GetWarnings() { return Warnings; }
+
+void HardwareValidator::ClearWarnings() { Warnings.setEmpty(); }
+
+bool HardwareValidator::HasWarnings() { return Warnings.size() > 0; }
+
 void HardwareValidator::ValidateHardware(const XString8Array &LoadedKexts) {
+  // Clear previous warnings
+  ClearWarnings();
+
   // Global validation entry point - check all hardware
   CheckIntelWifi(LoadedKexts);
   CheckIntelEthernet(LoadedKexts);
@@ -100,8 +118,7 @@ void HardwareValidator::CheckIntelWifi(const XString8Array &LoadedKexts) {
                        IsKextLoaded(LoadedKexts, XString8("itlwm"));
 
     if (!kextPresent) {
-      DebugLog(1, "HardwareValidator: [WARNING] Intel Wi-Fi detected but no "
-                  "itlwm/AirportItlwm kext loaded!\n");
+      AddWarning("Intel Wi-Fi: Missing itlwm/AirportItlwm kext");
     } else {
       DebugLog(
           1,
@@ -159,10 +176,8 @@ void HardwareValidator::CheckIntelEthernet(const XString8Array &LoadedKexts) {
     bool bootArgPresent = IsBootArgPresent(XString8("e1000=0"));
 
     if (!bootArgPresent) {
-      DebugLog(1, "HardwareValidator: [WARNING] Intel I225-V detected but "
-                  "boot-arg 'e1000=0' is missing!\n");
-      DebugLog(1, "                   Network may not work on macOS 12+ "
-                  "without this boot-arg.\n");
+      AddWarning(
+          "Intel I225-V: Missing boot-arg 'e1000=0' (required for macOS 12+)");
     } else {
       DebugLog(1, "HardwareValidator: [OK] Intel I225-V detected with correct "
                   "boot-arg.\n");
@@ -215,8 +230,7 @@ void HardwareValidator::CheckRealtekEthernet(const XString8Array &LoadedKexts) {
         IsKextLoaded(LoadedKexts, XString8("LucyRTL8125Ethernet"));
 
     if (!kextPresent) {
-      DebugLog(1, "HardwareValidator: [WARNING] Realtek RTL8125 detected but "
-                  "LucyRTL8125Ethernet.kext is missing!\n");
+      AddWarning("Realtek RTL8125: Missing LucyRTL8125Ethernet.kext");
     } else {
       DebugLog(1, "HardwareValidator: [OK] Realtek RTL8125 detected and driver "
                   "present.\n");
@@ -268,10 +282,7 @@ void HardwareValidator::CheckAMDGPU(const XString8Array &LoadedKexts) {
     bool kextPresent = IsKextLoaded(LoadedKexts, XString8("WhateverGreen"));
 
     if (!kextPresent) {
-      DebugLog(1, "HardwareValidator: [WARNING] AMD GPU detected but "
-                  "WhateverGreen.kext is missing!\n");
-      DebugLog(1, "                   Graphics acceleration may fail without "
-                  "this kext.\n");
+      AddWarning("AMD GPU: Missing WhateverGreen.kext (graphics may fail)");
     } else {
       DebugLog(1, "HardwareValidator: [OK] AMD GPU detected and "
                   "WhateverGreen.kext present.\n");

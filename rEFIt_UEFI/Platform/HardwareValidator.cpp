@@ -305,51 +305,22 @@ void HardwareValidator::CheckAMDGPU(const XString8Array &LoadedKexts) {
 #define SAFE_MODE_THRESHOLD 3
 
 void HardwareValidator::IncrementBootFailCount() {
-  UINT32 FailCount = GetBootFailCount();
-  FailCount++;
-
-  EFI_STATUS Status = gRT->SetVariable(
-      CLOVER_BOOT_FAIL_COUNT_VAR, gEfiAppleBootGuid,
-      EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS |
-          EFI_VARIABLE_RUNTIME_ACCESS,
-      sizeof(UINT32), &FailCount);
-
-  if (EFI_ERROR(Status)) {
-    DebugLog(1, "HardwareValidator: Failed to increment boot fail count: %s\n",
-             efiStrError(Status));
-  } else {
-    DebugLog(1, "HardwareValidator: Boot fail count incremented to %d\n",
-             FailCount);
-  }
+  // DISABLED: NVRAM writes cause kernel panic on 3rd boot
+  // Do nothing to prevent boot issues
+  DebugLog(1,
+           "HardwareValidator: Boot fail increment DISABLED (NVRAM issue)\n");
 }
 
 UINT32 HardwareValidator::GetBootFailCount() {
-  UINT32 FailCount = 0;
-  UINTN Size = sizeof(UINT32);
-
-  EFI_STATUS Status = gRT->GetVariable(
-      CLOVER_BOOT_FAIL_COUNT_VAR, gEfiAppleBootGuid, NULL, &Size, &FailCount);
-
-  if (EFI_ERROR(Status)) {
-    // Variable doesn't exist or error reading - assume 0
-    return 0;
-  }
-
-  return FailCount;
+  // DISABLED: NVRAM access causes kernel panic on 3rd boot
+  // Always return 0 to prevent boot issues
+  return 0;
 }
 
 void HardwareValidator::ResetBootFailCount() {
-  UINT32 FailCount = 0;
-
-  EFI_STATUS Status = gRT->SetVariable(
-      CLOVER_BOOT_FAIL_COUNT_VAR, gEfiAppleBootGuid,
-      EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS |
-          EFI_VARIABLE_RUNTIME_ACCESS,
-      sizeof(UINT32), &FailCount);
-
-  if (!EFI_ERROR(Status)) {
-    DebugLog(1, "HardwareValidator: Boot fail count reset to 0\n");
-  }
+  // DISABLED: NVRAM writes cause kernel panic on 3rd boot
+  // Do nothing to prevent boot issues
+  DebugLog(1, "HardwareValidator: Boot fail reset DISABLED (NVRAM issue)\n");
 }
 
 bool HardwareValidator::ShouldEnterSafeMode() {

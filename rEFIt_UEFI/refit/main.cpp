@@ -3743,11 +3743,13 @@ DBG("strlen '<' =%ld or %lld\n", L_STR_LEN("<"), AsciiStrLen("<"));
       MainMenu.AddMenuEntry(&MenuEntryAbout, false);
 
       // Hardware Status menu entry
+      DBG("Adding Hardware Status menu entry...\n");
       MenuEntryHardwareStatus.Image =
           ThemeX->GetIcon((INTN)BUILTIN_ICON_FUNC_ABOUT);
       if (gSettings.Boot.DisableCloverHotkeys)
         MenuEntryHardwareStatus.ShortcutLetter = 0x00;
       MainMenu.AddMenuEntry(&MenuEntryHardwareStatus, false);
+      DBG("Hardware Status menu entry added successfully!\n");
 
       if (!(ThemeX->HideUIFlags & HIDEUI_FLAG_FUNCS) ||
           MainMenu.Entries.size() == 0) {

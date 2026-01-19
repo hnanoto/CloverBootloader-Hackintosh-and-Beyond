@@ -1391,10 +1391,6 @@ void HardwareStatusRefit(void) {
   HardwareStatusMenu.RunMenu(NULL);
 }
 
-
-  HardwareStatusMenu.RunMenu(NULL);
-}
-
 void HelpRefit(void) {
   if (HelpMenu.Entries.size() == 0) {
     HelpMenu.Daylight = ThemeX->Daylight;

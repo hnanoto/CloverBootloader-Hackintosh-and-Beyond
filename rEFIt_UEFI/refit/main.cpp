@@ -3802,29 +3802,31 @@ DBG("strlen '<' =%ld or %lld\n", L_STR_LEN("<"), AsciiStrLen("<"));
 #ifdef JIEF_DEBUG
         displayFreeMemory("Before RunMainMenu"_XS8);
 #endif
-        // Phase 4: Self-Healing - Increment boot attempt counter
-        HardwareValidator::IncrementBootFailCount();
+        // Phase 4: Self-Healing - DISABLED due to KP
+        // HardwareValidator::IncrementBootFailCount();
 
         // Check if we should enter Safe Mode due to repeated boot failures
-        if (HardwareValidator::ShouldEnterSafeMode()) {
-          HardwareValidator::ApplySafeModeSettings();
-        }
+        // if (HardwareValidator::ShouldEnterSafeMode()) {
+        //   HardwareValidator::ApplySafeModeSettings();
+        // }
 
         // Hardware validation: check if detected hardware has appropriate kexts
         // loaded
         {
+          /*
           XString8Array LoadedKextNames;
           for (size_t i = 0; i < InjectKextList.size(); ++i) {
             LoadedKextNames.Add(InjectKextList[i].FileName);
           }
-          HardwareValidator::ValidateHardware(LoadedKextNames);
+          HardwareValidator::ValidateHardware(LoadedKextNames); // DISABLED
 
           // Step 8: Check if previous boot was successful and reset counter if
           // needed
-          HardwareValidator::CheckAndResetIfLastBootSuccessful();
+          HardwareValidator::CheckAndResetIfLastBootSuccessful(); // DISABLED
 
           // Step 8: Generate HTML report if enabled
-          HardwareValidator::GenerateHTMLReport();
+          HardwareValidator::GenerateHTMLReport(); // DISABLED
+          */
         }
         MenuExit = MainMenu.RunMainMenu(DefaultIndex, &ChosenEntry);
       }

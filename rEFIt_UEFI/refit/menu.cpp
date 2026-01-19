@@ -41,6 +41,7 @@
 #include "../Platform/Settings.h"
 
 #include "../Platform/CloverVersion.h"
+#include "../Platform/HardwareValidator.h"
 #include "../Platform/HdaCodecDump.h"
 #include "../Platform/Injectors.h"
 #include "../Platform/KextList.h"
@@ -1346,7 +1347,6 @@ void AboutRefit(void) {
 REFIT_MENU_SCREEN HardwareStatusMenu(5, L"Hardware Status"_XSW, L""_XSW);
 
 void HardwareStatusRefit(void) {
-#include "../Platform/HardwareValidator.h"
 
   if (HardwareStatusMenu.Entries.size() == 0) {
     HardwareStatusMenu.Daylight = ThemeX->Daylight;

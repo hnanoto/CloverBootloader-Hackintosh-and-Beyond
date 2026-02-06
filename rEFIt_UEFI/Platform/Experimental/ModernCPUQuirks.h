@@ -8,7 +8,7 @@
  * OpenCore kernel quirks for optimal macOS compatibility.
  *
  * Copyright (c) 2024-2026 Clover Hackintosh & Beyond Team
- * Author: HybridCore Project
+ * Author: Clover Team
  *
  * This is an EXPERIMENTAL module for testing in Clover Hackintosh & Beyond
  * before potential inclusion in the official Clover repository.

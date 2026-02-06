@@ -73,3 +73,11 @@ DEBUG_REPORT.md
 CloverPackage/*.log
 build_failure.log
 buildme_run.log
+
+# Private/Local directories - DO NOT COMMIT
+HybridCore/
+Analysis_CloverV2/
+.bin/
+
+# Build logs
+my_build_log*.txt

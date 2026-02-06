@@ -5,7 +5,7 @@
  * Implementation
  *
  * Copyright (c) 2024-2026 Clover Hackintosh & Beyond Team
- * Author: HybridCore Project
+ * Author: Clover Team
  */
 
 #include "ModernCPUQuirks.h"

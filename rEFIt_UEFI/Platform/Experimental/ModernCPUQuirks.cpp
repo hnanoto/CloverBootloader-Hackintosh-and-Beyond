@@ -5,7 +5,7 @@
  * Implementation
  *
  * Copyright (c) 2024-2026 Clover Hackintosh & Beyond Team
- * Author: Clover Team
+ * Author: Clover Team & Hnanoto
  */
 
 #include "ModernCPUQuirks.h"
@@ -21,27 +21,31 @@
  */
 
 // Intel Family 6 Models
-#define INTEL_MODEL_SKYLAKE_DT 0x5E       // Skylake Desktop
-#define INTEL_MODEL_SKYLAKE_MB 0x4E       // Skylake Mobile
-#define INTEL_MODEL_SKYLAKE_X 0x55        // Skylake-X/W
-#define INTEL_MODEL_KABY_LAKE_DT 0x9E     // Kaby Lake Desktop
-#define INTEL_MODEL_KABY_LAKE_MB 0x8E     // Kaby Lake Mobile
-#define INTEL_MODEL_COFFEE_LAKE_DT 0x9E   // Coffee Lake Desktop (same as KL)
-#define INTEL_MODEL_COFFEE_LAKE_R_DT 0x9E // Coffee Lake-R (stepping diff)
-#define INTEL_MODEL_COMET_LAKE_DT 0xA5    // Comet Lake Desktop
-#define INTEL_MODEL_COMET_LAKE_MB 0xA6    // Comet Lake Mobile
-#define INTEL_MODEL_ICELAKE_MB 0x7E       // Ice Lake Mobile
-#define INTEL_MODEL_ICELAKE_DT 0x7D       // Ice Lake Desktop
-#define INTEL_MODEL_TIGER_LAKE_MB 0x8C    // Tiger Lake Mobile
-#define INTEL_MODEL_TIGER_LAKE_R 0x8D     // Tiger Lake-R
-#define INTEL_MODEL_ROCKET_LAKE 0xA7      // Rocket Lake
-#define INTEL_MODEL_ALDER_LAKE_DT 0x97    // Alder Lake Desktop
-#define INTEL_MODEL_ALDER_LAKE_MB 0x9A    // Alder Lake Mobile
-#define INTEL_MODEL_RAPTOR_LAKE_DT 0xB7   // Raptor Lake Desktop
-#define INTEL_MODEL_RAPTOR_LAKE_MB 0xBA   // Raptor Lake Mobile
-#define INTEL_MODEL_RAPTOR_LAKE_R 0xBF    // Raptor Lake Refresh (14th Gen)
-#define INTEL_MODEL_METEOR_LAKE 0xAC      // Meteor Lake
-#define INTEL_MODEL_ARROW_LAKE 0xC5       // Arrow Lake (preliminary)
+#define INTEL_MODEL_SKYLAKE_DT     0x5E     // Skylake Desktop
+#define INTEL_MODEL_SKYLAKE_MB     0x4E     // Skylake Mobile
+#define INTEL_MODEL_SKYLAKE_X      0x55     // Skylake-X/W
+#define INTEL_MODEL_KABY_LAKE_DT   0x9E     // Kaby Lake Desktop
+#define INTEL_MODEL_KABY_LAKE_MB   0x8E     // Kaby Lake Mobile
+#define INTEL_MODEL_COFFEE_LAKE_DT 0x9E     // Coffee Lake Desktop (same as KL)
+#define INTEL_MODEL_COFFEE_LAKE_R_DT 0x9E   // Coffee Lake-R (stepping diff)
+#define INTEL_MODEL_COMET_LAKE_DT   0xA5    // Comet Lake Desktop
+#define INTEL_MODEL_COMET_LAKE_MB   0xA6    // Comet Lake Mobile
+#define INTEL_MODEL_ICELAKE_MB      0x7E    // Ice Lake Mobile
+#define INTEL_MODEL_ICELAKE_DT      0x7D    // Ice Lake Desktop
+#define INTEL_MODEL_TIGER_LAKE_MB   0x8C    // Tiger Lake Mobile
+#define INTEL_MODEL_TIGER_LAKE_R    0x8D    // Tiger Lake-R
+#define INTEL_MODEL_ROCKET_LAKE     0xA7    // Rocket Lake
+#define INTEL_MODEL_ALDER_LAKE_DT   0x97    // Alder Lake Desktop
+#define INTEL_MODEL_ALDER_LAKE_MB   0x9A    // Alder Lake Mobile
+#define INTEL_MODEL_RAPTOR_LAKE_DT  0xB7    // Raptor Lake Desktop
+#define INTEL_MODEL_RAPTOR_LAKE_MB  0xBA    // Raptor Lake Mobile
+#define INTEL_MODEL_RAPTOR_LAKE_R   0xBF    // Raptor Lake Refresh 
+#define INTEL_MODEL_METEOR_LAKE     0xAC    // Meteor Lake
+
+#define INTEL_MODEL_METEOR_LAKE_14  0xAA  /* 14h Meteor Lake */
+#define INTEL_MODEL_ARROW_LAKE		0xC6
+#define INTEL_MODEL_ARROW_LAKE_X    0xC5  /* 15h Arrow Lake */
+#define INTEL_MODEL_ARROW_LAKE_U    0xB5  /* 15h Arrow Lake */
 
 /* ============================================================================
  * AMD CPU Family/Model Definitions
@@ -81,18 +85,18 @@ ModernCpuDetect(IN OC_CPU_INFO *CpuInfo, OUT MODERN_CPU_INFO *ModernInfo) {
   ZeroMem(ModernInfo, sizeof(MODERN_CPU_INFO));
 
   // Extract CPUID information
-  ModernInfo->Family = CpuInfo->CpuFamily;
-  ModernInfo->Model = CpuInfo->CpuModel;
-  ModernInfo->Stepping = CpuInfo->CpuStepping;
-  ModernInfo->ExtFamily = CpuInfo->CpuFamily; // OcCpuLib already extends
-  ModernInfo->ExtModel = CpuInfo->CpuModel;
+  ModernInfo->Family = CpuInfo->Family;
+  ModernInfo->Model = CpuInfo->Model;
+  ModernInfo->Stepping = CpuInfo->Stepping;
+  ModernInfo->ExtFamily = CpuInfo->ExtFamily; // OcCpuLib already extends
+  ModernInfo->ExtModel = CpuInfo->ExtModel;
 
   // Core counts
   ModernInfo->TotalCoreCount = CpuInfo->CoreCount;
   ModernInfo->ThreadCount = CpuInfo->ThreadCount;
 
   // Detect vendor and architecture
-  if (CpuInfo->CpuVendor == OcCpuVendorIntel) {
+  if (CpuInfo->Vendor[0] == CPUID_VENDOR_INTEL) {
     // Detect Intel hybrid architecture (Alder Lake+)
     if (ModernInfo->Model == INTEL_MODEL_ALDER_LAKE_DT ||
         ModernInfo->Model == INTEL_MODEL_ALDER_LAKE_MB ||
@@ -100,7 +104,10 @@ ModernCpuDetect(IN OC_CPU_INFO *CpuInfo, OUT MODERN_CPU_INFO *ModernInfo) {
         ModernInfo->Model == INTEL_MODEL_RAPTOR_LAKE_MB ||
         ModernInfo->Model == INTEL_MODEL_RAPTOR_LAKE_R ||
         ModernInfo->Model == INTEL_MODEL_METEOR_LAKE ||
-        ModernInfo->Model == INTEL_MODEL_ARROW_LAKE) {
+		ModernInfo->Model == INTEL_MODEL_METEOR_LAKE_14 ||
+		ModernInfo->Model == INTEL_MODEL_ARROW_LAKE ||
+		ModernInfo->Model == INTEL_MODEL_ARROW_LAKE_X ||
+        ModernInfo->Model == INTEL_MODEL_ARROW_LAKE_U) {
       ModernInfo->ArchType = CPU_ARCH_HYBRID_INTEL;
       ModernInfo->HasHybridArch = TRUE;
 
@@ -126,7 +133,7 @@ ModernCpuDetect(IN OC_CPU_INFO *CpuInfo, OUT MODERN_CPU_INFO *ModernInfo) {
     case INTEL_MODEL_KABY_LAKE_DT:
     case INTEL_MODEL_KABY_LAKE_MB:
       // Need to distinguish Coffee Lake by stepping
-      if (CpuInfo->CpuStepping >= 10) {
+      if (CpuInfo->Stepping >= 10) {
         ModernInfo->Generation = CPU_GEN_INTEL_COFFEE_LAKE;
       } else {
         ModernInfo->Generation = CPU_GEN_INTEL_KABY_LAKE;
@@ -157,10 +164,13 @@ ModernCpuDetect(IN OC_CPU_INFO *CpuInfo, OUT MODERN_CPU_INFO *ModernInfo) {
       break;
 
     case INTEL_MODEL_METEOR_LAKE:
+	case INTEL_MODEL_METEOR_LAKE_14:
       ModernInfo->Generation = CPU_GEN_INTEL_METEOR_LAKE;
       break;
 
     case INTEL_MODEL_ARROW_LAKE:
+	case INTEL_MODEL_ARROW_LAKE_X:
+	case INTEL_MODEL_ARROW_LAKE_U:
       ModernInfo->Generation = CPU_GEN_INTEL_ARROW_LAKE;
       break;
 
@@ -173,7 +183,7 @@ ModernCpuDetect(IN OC_CPU_INFO *CpuInfo, OUT MODERN_CPU_INFO *ModernInfo) {
       }
       break;
     }
-  } else if (CpuInfo->CpuVendor == OcCpuVendorAmd) {
+  } else if (CpuInfo->Vendor[0] == CPUID_VENDOR_AMD) {
     ModernInfo->ArchType = CPU_ARCH_X86_64_AMD;
     ModernInfo->HasHybridArch = FALSE;
     ModernInfo->PerfCoreCount = CpuInfo->CoreCount;

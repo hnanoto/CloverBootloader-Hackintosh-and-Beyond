@@ -17,10 +17,13 @@
 #ifndef MODERN_CPU_QUIRKS_H
 #define MODERN_CPU_QUIRKS_H
 
+#include "../../include/OC.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include <Library/PrintLib.h>
 #include <Library/OcConfigurationLib.h>
 #include <Library/OcCpuLib.h>
 #include <Uefi.h>

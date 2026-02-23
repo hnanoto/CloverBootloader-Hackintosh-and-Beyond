@@ -567,7 +567,7 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID &APFSTargetUUID,
 
     if (InstallerPlist.isEmpty()) {
       InstallerPlist =
-          SWPrintf("\\.IABootFilesSystemVersion.plist"); // 10.9 - 10.13.3
+          SWPrintf("\\.IABootFiles\\SystemVersion.plist"); // 10.9 - 10.13.3
       if (!FileExists(Volume->RootDir, InstallerPlist) &&
           FileExists(Volume->RootDir,
                      L"\\System\\Library\\CoreServices\\boot.efi") &&
@@ -719,7 +719,7 @@ MacOsVersion GetOSVersion(int LoaderType, const EFI_GUID &APFSTargetUUID,
             SWPrintf("\\macOS Install Data\\InstallInfo.plist"); // 10.12+
         if (!FileExists(Volume->RootDir, InstallerPlist)) {
           InstallerPlist =
-              SWPrintf("\\com.apple.boot.R\\SystemVersion.plist)"); // 10.12+
+              SWPrintf("\\com.apple.boot.R\\SystemVersion.plist"); // 10.12+
           if (!FileExists(Volume->RootDir, InstallerPlist)) {
             InstallerPlist =
                 SWPrintf("\\com.apple.boot.P\\SystemVersion.plist"); // 10.12+

@@ -174,8 +174,8 @@ EFI_STATUS ParseXML(const UINT8* buffer, TagDict** dict, size_t bufSize)
     return EFI_INVALID_PARAMETER;
   }
 
-  configBuffer = (CHAR8*)malloc(bufferSize+1);
-  memset(configBuffer, 0, bufferSize+1);
+  configBuffer = (CHAR8*)AllocateZeroPool(bufferSize+1);
+//  memset(configBuffer, 0, bufferSize+1);
   if(configBuffer == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

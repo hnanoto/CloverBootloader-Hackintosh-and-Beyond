@@ -938,12 +938,12 @@ void LOADER_ENTRY::DelegateKernelPatches() {
   mOpenCoreConfiguration.Kernel.Patch.ValueSize =
       sizeof(__typeof_am__(**mOpenCoreConfiguration.Kernel.Patch.Values));
   mOpenCoreConfiguration.Kernel.Patch.Values =
-      (__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values) *)malloc(
+      (__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values) *)AllocateZeroPool(
           mOpenCoreConfiguration.Kernel.Patch.AllocCount *
           sizeof(__typeof_am__(*mOpenCoreConfiguration.Kernel.Patch.Values)));
-  memset(mOpenCoreConfiguration.Kernel.Patch.Values, 0,
-         mOpenCoreConfiguration.Kernel.Patch.AllocCount *
-             sizeof(*mOpenCoreConfiguration.Kernel.Patch.Values));
+//  memset(mOpenCoreConfiguration.Kernel.Patch.Values, 0,
+//         mOpenCoreConfiguration.Kernel.Patch.AllocCount *
+//             sizeof(*mOpenCoreConfiguration.Kernel.Patch.Values));
 
   UINT32 FakeCPUID = gSettings.Smbios.SFakeCPU;
   if (FakeCPUID != 0)
@@ -1425,13 +1425,13 @@ void LOADER_ENTRY::StartLoader() {
     mOpenCoreConfiguration.Kernel.Add.ValueSize = sizeof(
         __typeof_am__(**mOpenCoreConfiguration.Kernel.Add
                             .Values)); // sizeof(OC_KERNEL_ADD_ENTRY) == 680
-    mOpenCoreConfiguration.Kernel.Add.Values = (OC_KERNEL_ADD_ENTRY **)malloc(
+    mOpenCoreConfiguration.Kernel.Add.Values = (OC_KERNEL_ADD_ENTRY **)AllocateZeroPool(
         mOpenCoreConfiguration.Kernel.Add.AllocCount *
         sizeof(*mOpenCoreConfiguration.Kernel.Add
                     .Values)); // sizeof(OC_KERNEL_ADD_ENTRY*) == sizeof(ptr)
-    memset(mOpenCoreConfiguration.Kernel.Add.Values, 0,
-           mOpenCoreConfiguration.Kernel.Add.AllocCount *
-               sizeof(*mOpenCoreConfiguration.Kernel.Add.Values));
+//    memset(mOpenCoreConfiguration.Kernel.Add.Values, 0,
+//           mOpenCoreConfiguration.Kernel.Add.AllocCount *
+//               sizeof(*mOpenCoreConfiguration.Kernel.Add.Values));
 
     // Seems that Lilu must be first.
     size_t pos = setKextAtPos(&kextArray, "Lilu.kext"_XS8, 0);
@@ -1481,10 +1481,10 @@ void LOADER_ENTRY::StartLoader() {
           KextEntry.KextDirNameUnderOEMPath.wc_str(),
           KextEntry.FileName.wc_str());
       mOpenCoreConfiguration.Kernel.Add.Values[kextIdx] =
-          (__typeof_am__(*mOpenCoreConfiguration.Kernel.Add.Values))malloc(
+          (__typeof_am__(*mOpenCoreConfiguration.Kernel.Add.Values))AllocateZeroPool(
               mOpenCoreConfiguration.Kernel.Add.ValueSize);
-      memset(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx], 0,
-             mOpenCoreConfiguration.Kernel.Add.ValueSize);
+//      memset(mOpenCoreConfiguration.Kernel.Add.Values[kextIdx], 0,
+//             mOpenCoreConfiguration.Kernel.Add.ValueSize);
       mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Enabled = 1;
       OC_STRING_ASSIGN(
           mOpenCoreConfiguration.Kernel.Add.Values[kextIdx]->Arch,
@@ -1600,16 +1600,19 @@ void LOADER_ENTRY::StartLoader() {
 
     mOpenCoreConfiguration.Kernel.Force.Count =
         (UINT32)KernelAndKextPatches.ForceKextsToLoad.size();
+//DBG("Force.count=%u\n", mOpenCoreConfiguration.Kernel.Force.Count);
     mOpenCoreConfiguration.Kernel.Force.AllocCount =
         mOpenCoreConfiguration.Kernel.Force.Count;
     mOpenCoreConfiguration.Kernel.Force.ValueSize =
         sizeof(__typeof_am__(**mOpenCoreConfiguration.Kernel.Force
                                    .Values)); // sizeof(OC_KERNEL_FORCE_ENTRY)
+//DBG("ValueSize=%u\n", mOpenCoreConfiguration.Kernel.Force.ValueSize);  //== 680
     int valuesSize = mOpenCoreConfiguration.Kernel.Force.AllocCount *
                      sizeof(*mOpenCoreConfiguration.Kernel.Force.Values);
-    mOpenCoreConfiguration.Kernel.Force.Values = (OC_KERNEL_ADD_ENTRY **)malloc(
+    mOpenCoreConfiguration.Kernel.Force.Values = (OC_KERNEL_ADD_ENTRY **)AllocateZeroPool(
         valuesSize); // sizeof(OC_KERNEL_FORCE_ENTRY*) == sizeof(ptr)
-    memset(mOpenCoreConfiguration.Kernel.Force.Values, 0, valuesSize);
+//DBG("valuesSize=%d\n", valuesSize);
+ //   memset(mOpenCoreConfiguration.Kernel.Force.Values, 0, valuesSize);
 
     for (size_t kextIdx = 0;
          kextIdx < KernelAndKextPatches.ForceKextsToLoad.size(); kextIdx++) {
@@ -1618,10 +1621,10 @@ void LOADER_ENTRY::StartLoader() {
 
       DBG("Force kext to OC : Path=%ls\n", forceKext.wc_str());
       mOpenCoreConfiguration.Kernel.Force.Values[kextIdx] =
-          (__typeof_am__(*mOpenCoreConfiguration.Kernel.Force.Values))malloc(
+          (__typeof_am__(*mOpenCoreConfiguration.Kernel.Force.Values))AllocateZeroPool(
               mOpenCoreConfiguration.Kernel.Force.ValueSize);
-      memset(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx], 0,
-             mOpenCoreConfiguration.Kernel.Force.ValueSize);
+//      memset(mOpenCoreConfiguration.Kernel.Force.Values[kextIdx], 0,
+//             mOpenCoreConfiguration.Kernel.Force.ValueSize);
       mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->Enabled = 1;
       OC_STRING_ASSIGN(
           mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->Arch,
@@ -1720,7 +1723,7 @@ void LOADER_ENTRY::StartLoader() {
         blockCount++;
       }
     }
-
+	DBG("found %zu kexts to block\n", blockCount);
     if (blockCount > 0) {
       mOpenCoreConfiguration.Kernel.Block.Count = (UINT32)blockCount;
       mOpenCoreConfiguration.Kernel.Block.AllocCount =
@@ -1730,9 +1733,9 @@ void LOADER_ENTRY::StartLoader() {
       valuesSize = mOpenCoreConfiguration.Kernel.Block.AllocCount *
                    sizeof(*mOpenCoreConfiguration.Kernel.Block.Values);
       mOpenCoreConfiguration.Kernel.Block.Values =
-          (OC_KERNEL_BLOCK_ENTRY **)malloc(valuesSize);
+          (OC_KERNEL_BLOCK_ENTRY **)AllocateZeroPool(valuesSize);
 
-      memset(mOpenCoreConfiguration.Kernel.Block.Values, 0, valuesSize);
+//      memset(mOpenCoreConfiguration.Kernel.Block.Values, 0, valuesSize);
 
       size_t blockValueIdx = 0;
       for (size_t blockIdx = 0;
@@ -1743,10 +1746,10 @@ void LOADER_ENTRY::StartLoader() {
         }
 
         mOpenCoreConfiguration.Kernel.Block.Values[blockValueIdx] =
-            (__typeof_am__(*mOpenCoreConfiguration.Kernel.Block.Values))malloc(
+            (__typeof_am__(*mOpenCoreConfiguration.Kernel.Block.Values))AllocateZeroPool(
                 mOpenCoreConfiguration.Kernel.Block.ValueSize);
-        memset(mOpenCoreConfiguration.Kernel.Block.Values[blockValueIdx], 0,
-               mOpenCoreConfiguration.Kernel.Block.ValueSize);
+//        memset(mOpenCoreConfiguration.Kernel.Block.Values[blockValueIdx], 0,
+//              mOpenCoreConfiguration.Kernel.Block.ValueSize);
         mOpenCoreConfiguration.Kernel.Block.Values[blockValueIdx]->Enabled = 1;
         OC_STRING_ASSIGN(
             mOpenCoreConfiguration.Kernel.Block.Values[blockValueIdx]->Arch,

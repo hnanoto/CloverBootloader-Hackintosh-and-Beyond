@@ -226,7 +226,7 @@ public:
   typedef ThisLStringClass ls_t;
 
 protected:
-  T *__m_data;
+  T *__m_data = nullptr;
 
 protected:
 #ifdef XSTRING_CACHING_OF_SIZE
@@ -358,7 +358,7 @@ public:
     }
     size_t nb = 0;
     const T *p = data();
-    char32_t char32;
+    char32_t char32 = 0;
     do {
       p = get_char32_from_string(p, &char32);
       if (!char32) {
@@ -580,7 +580,7 @@ public:
     size_t lastSepPos = MAX_XSIZE;
     size_t pos = 0;
     const T *p = data();
-    char32_t char32;
+    char32_t char32 = 0;
     p = get_char32_from_string(p, &char32);
     while (char32) {
       if (char32 == U'/' || char32 == U'\\')
@@ -1075,7 +1075,7 @@ public:
     takeValueFrom(S);
   }
 
-  // TEMPORARILY DISABLED
+//  TEMPORARILY DISABLED
 //	template<typename O>
 //	explicit __String<T, ThisXStringClass>(const O* S) { Init(0);
 //takeValueFrom(S); }

@@ -265,10 +265,9 @@ template<class TYPE>
 size_t MTArray<TYPE>::Add(const TYPE newElement, size_t count)
 {
 //  MTArray_DBG("size_t MTArray<TYPE>::Add(const TYPE newElement, size_t count) -> Enter. count=%d _Len=%d _Size=%d\n", count, m_len, m_size);
-  size_t i;
 
 	CheckSize(m_len+count);
-	for ( i=0 ; i<count ; i++ ) {
+	for (size_t i=0 ; i<count ; i++ ) {
 		m_data[m_len+i] = newElement;
 	}
 	m_len += count;

@@ -62,7 +62,7 @@ public:
 
   const XStringW getVolLabelOrOSXVolumeNameOrVolName() {
     if ( VolLabel.notEmpty() ) return VolLabel;
-    if ( osxVolumeName.notEmpty() ) return osxVolumeName;
+//    if ( osxVolumeName.notEmpty() ) return osxVolumeName;   // not assigned
     return VolName;
   }
 };

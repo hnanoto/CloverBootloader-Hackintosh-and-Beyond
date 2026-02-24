@@ -440,7 +440,8 @@ public:
   XIcon DriveImage = XIcon();
   XImage CustomLogoImage = XImage(); // Todo : remove from settings.
   UINT8 CustomLogoType = 0;
-  KERNEL_AND_KEXT_PATCHES KernelAndKextPatches = KERNEL_AND_KEXT_PATCHES();
+ // KERNEL_AND_KEXT_PATCHES KernelAndKextPatches = KERNEL_AND_KEXT_PATCHES();
+  XBool KPDebug = false;
 
   CUSTOM_LOADER_ENTRY(const CUSTOM_LOADER_ENTRY_SETTINGS &_settings);
 

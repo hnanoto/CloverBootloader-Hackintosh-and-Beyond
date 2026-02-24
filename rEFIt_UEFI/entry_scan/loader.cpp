@@ -1042,7 +1042,8 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(
     IN UINT8 OSType, IN UINT8 Flags, IN wchar_t Hotkey,
     EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor, IN UINT8 CustomBoot,
     IN const XImage &CustomLogo, IN const KERNEL_AND_KEXT_PATCHES *Patches,
-    IN XBool CustomEntry) {
+    IN XBool CustomEntry) 
+{
   EFI_DEVICE_PATH *LoaderDevicePath;
   XStringW LoaderDevicePathString;
   XStringW FilePathAsString;
@@ -1289,9 +1290,10 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(
     Entry->LoaderType = OSTYPE_OTHER;
     break;
   }
-  // DBG("OSIconName=%ls \n", OSIconName);
+//  DBG("OSIconName=%ls \n", OSIconName.wc_str());
   Entry->OSName = OSIconName.subString(0, OSIconName.indexOf(',')); // TODO
   //  SmbiosList.AddReference(OSName.forgetDataWithoutFreeing(), true);
+
   Entry->Title = FullTitle;
   if (Entry->Title.isEmpty() && Volume->VolLabel.notEmpty()) {
     if (Volume->VolLabel[0] == L'#') {
@@ -1335,7 +1337,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(
               : BasenameXW.wc_str());
     }
   }
-  //  DBG("check Entry->Title \n");
+ // DBG("check Entry->Title \n");
   if (Entry->Title.isEmpty()) {
     //   DBG("encounter LoaderTitle ==%ls and Entry->VolName ==%ls\n",
     //   LoaderTitle.wc_str(), Entry->VolName);
@@ -1399,11 +1401,17 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(
     }
   }
   Entry->BootBgColor = BootBgColor;
-  Entry->KernelAndKextPatches =
-      Patches == NULL ? gSettings.KernelAndKextPatches : *Patches;
+//  Entry->KernelAndKextPatches =
+//      ((Patches == NULL) ? gSettings.KernelAndKextPatches : *Patches);
+  Entry->KPDebug = ((Patches == NULL) ? gSettings.KernelAndKextPatches.KPDebug : Patches->KPDebug);
+//  if (Patches) {
+//	Entry->KernelAndKextPatches.takeValueFrom(*Patches);
+//  } else {
+//	Entry->KernelAndKextPatches.takeValueFrom(gSettings.KernelAndKextPatches);
+//  }
 
 #ifdef DUMP_KERNEL_KEXT_PATCHES
-  DumpKernelAndKextPatches(Entry->KernelAndKextPatches);
+  DumpKernelAndKextPatches(gSettings.KernelAndKextPatches);
 #endif
   DBG("%sLoader entry created for '%ls'\n", indent,
       Entry->DevicePathString.wc_str());
@@ -1439,37 +1447,44 @@ void LOADER_ENTRY::AddDefaultMenu() {
                             DisplayedVolName.wc_str());
 
   SubScreen->TitleImage = Image;
-  SubScreen->ID = LoaderType + 20; // wow
-  //    DBG("get anime for os=%lld\n", SubScreen->ID);
+  SubScreen->ID = LoaderType + 40; // wow
+//     DBG("get anime for os=%lld\n", SubScreen->ID);
   SubScreen->GetAnime();
   VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock,
                                     Volume->BlockIO->Media->BlockSize),
                          20);
+
   SubScreen->AddMenuInfoLine_f("Volume size: %lluMb", VolumeSize);
   SubScreen->AddMenuInfoLine_f("%ls",
                                FileDevicePathToXStringW(DevicePath).wc_str());
+
   Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
   if (Guid.notNull()) {
     SubScreen->AddMenuInfoLine_f("UUID: %s", Guid.toXString8().c_str());
   }
+
   if (Volume->ApfsFileSystemUUID.notNull() || APFSTargetUUID.notNull()) {
     SubScreen->AddMenuInfoLine_f("APFS volume name: %ls",
                                  DisplayedVolName.wc_str());
   }
+
   if (Volume->ApfsFileSystemUUID.notNull()) {
     SubScreen->AddMenuInfoLine_f(
         "APFS file system UUID: %s",
         Volume->ApfsFileSystemUUID.toXString8().c_str());
   }
+
   if (Volume->ApfsContainerUUID.notNull()) {
     SubScreen->AddMenuInfoLine_f(
         "APFS container UUID: %s",
         Volume->ApfsContainerUUID.toXString8().c_str());
   }
+
   if (APFSTargetUUID.notNull()) {
     SubScreen->AddMenuInfoLine_f("APFS target UUID: %s",
                                  APFSTargetUUID.toXString8().c_str());
   }
+
   SubScreen->AddMenuInfoLine_f("Options: %s",
                                LoadOptions.ConcatAll(" "_XS8).c_str());
   // loader-specific submenu entries
@@ -1484,7 +1499,6 @@ void LOADER_ENTRY::AddDefaultMenu() {
       SubEntry->Flags = OSFLAG_UNSET(SubEntry->Flags, OSFLAG_HIBERNATED);
       SubScreen->AddMenuEntry(SubEntry, true);
     }
-
     SubEntry = getPartiallyDuplicatedEntry();
     SubEntry->Title.SWPrintf("Boot %s with selected options", macOS);
     SubScreen->AddMenuEntry(SubEntry, true);
@@ -1518,11 +1532,9 @@ void LOADER_ENTRY::AddDefaultMenu() {
     SubScreen->AddMenuCheck("Don't reboot on panic (debug=0x100)", OPT_DEBUG,
                             68);
     SubScreen->AddMenuCheck("Debug kexts (kextlog=0xffff)", OPT_KEXTLOG, 68);
-
     if (gSettings.RtVariables.CsrActiveConfig == 0) {
       SubScreen->AddMenuCheck("No SIP", OSFLAG_NOSIP, 69);
     }
-
   } else if (LoaderType == OSTYPE_LINEFI) {
     XBool Quiet = LoadOptions.contains(quietLitteral);
     XBool WithSplash = LoadOptions.contains(splashLitteral);
@@ -2533,9 +2545,10 @@ void ScanLoader(void)
   DBG("Entries list before ordering\n");
   for (size_t idx = 0; idx < MainMenu.Entries.sizeIncludingHidden(); idx++) {
     if (MainMenu.Entries.ElementAt(idx).getLOADER_ENTRY()) {
-      DBG("    Entry %zd : %ls%s\n", idx,
+      DBG("    Entry %zd : %ls%s \n", idx,
           MainMenu.Entries.ElementAt(idx).Title.wc_str(),
-          MainMenu.Entries.ElementAt(idx).Hidden ? " (hidden)" : "");
+          MainMenu.Entries.ElementAt(idx).Hidden ? " (hidden)" : ""
+		  );
     } else {
       DBG("    Entry %zd : %ls%s\n", idx,
           MainMenu.Entries.ElementAt(idx).Title.wc_str(),

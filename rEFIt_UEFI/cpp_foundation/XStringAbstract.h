@@ -937,11 +937,13 @@ protected:
    */
   void Alloc(size_t nNewAllocatedSize) {
     if (m_allocatedSize == 0) {
-      super::__m_data = (T *)malloc(nNewAllocatedSize * sizeof(T));
+      super::__m_data = (T *)AllocatePool(nNewAllocatedSize * sizeof(T));  //Slice: was malloc
     } else {
-      super::__m_data =
-          (T *)Xrealloc(super::__m_data, nNewAllocatedSize * sizeof(T),
-                        m_allocatedSize * sizeof(T));
+//      super::__m_data =
+//          (T *)Xrealloc(super::__m_data, nNewAllocatedSize * sizeof(T),
+//                        m_allocatedSize * sizeof(T));
+		super::__m_data = (T*)ReallocatePool( m_allocatedSize * sizeof(T),
+			 nNewAllocatedSize * sizeof(T), super::__m_data);
     }
     if (!super::__m_data) {
       log_technical_bug("XStringAbstract::Alloc(%zu) : Xrealloc(%" PRIuPTR

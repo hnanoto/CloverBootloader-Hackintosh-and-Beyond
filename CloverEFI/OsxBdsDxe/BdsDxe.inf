@@ -239,3 +239,10 @@
 [UserExtensions.TianoCore."ExtraFiles"]
   BdsDxeExtra.uni
 
+[BuildOptions]
+
+  # -fno-rtti is only for C++
+
+  XCODE:*_*_*_CC_FLAGS  = -fno-use-cxa-atexit -fno-omit-frame-pointer -fno-exceptions -DJCONST=CONST -Wno-incompatible-ms-struct #-Wunused-parameter
+
+  GCC:*_*_*_CC_FLAGS = -fno-omit-frame-pointer -DJCONST=CONST -fno-lto

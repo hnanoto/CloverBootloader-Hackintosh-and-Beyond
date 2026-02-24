@@ -8,6 +8,18 @@
 #include "KERNEL_AND_KEXT_PATCHES.h"
 #include "MacOsVersion.h"
 
+#ifndef DEBUG_ALL
+#define DEBUG_KEXT 1
+#else
+#define DEBUG_KEXT DEBUG_ALL
+#endif
+
+#if DEBUG_KEXT == 0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_KEXT, __VA_ARGS__)
+#endif
+
 XBool ABSTRACT_PATCH::IsPatchEnabledByBuildNumber(const XString8& Build)
 {
   XBool ret = false;
@@ -63,28 +75,27 @@ XBool ABSTRACT_PATCH::IsPatchEnabled(const MacOsVersion& CurrOS)
   return ret;
 }
 
-XBool KEXT_TO_BLOCK::ShouldBlock(const MacOsVersion& CurrOS) const
+int KEXT_TO_BLOCK::ShouldBlock(const MacOsVersion& CurrOS) const
 {
-  if (Disabled || !MenuItem.BValue || Name.isEmpty()) {
-    return false;
+  if (!MenuItem.BValue || Name.isEmpty()) {  // BValue already == !Disabled
+    return 0;
   }
 
   XString8 matchOS = MatchOS;
   matchOS.trim();
   if (matchOS.isEmpty()) {
-    return true;
+    return 1;
   }
 
   XString8 matchOSLower = matchOS;
   matchOSLower.lowerAscii();
   if (matchOSLower == "all"_XS8) {
-    return true;
+    return 1;
   }
 
   if (CurrOS.isEmpty()) {
-    return false;
+    return 0;
   }
-
   XString8Array mos = Split<XString8Array>(matchOS, ","_XS8).trimEachString();
   for (size_t i = 0; i < mos.size(); ++i) {
     if (mos[i].isEmpty()) {
@@ -93,14 +104,14 @@ XBool KEXT_TO_BLOCK::ShouldBlock(const MacOsVersion& CurrOS) const
     XString8 entryLower = mos[i];
     entryLower.lowerAscii();
     if (entryLower == "all"_XS8) {
-      return true;
+      return 1;
     }
     if (CurrOS.match(mos[i])) {
-      return true;
+      return 1;
     }
   }
 
-  return false;
+  return 0;
 }
 
 

@@ -142,8 +142,8 @@ CUSTOM_LOADER_ENTRY::CUSTOM_LOADER_ENTRY(const CUSTOM_LOADER_ENTRY_SETTINGS& _se
     SubEntries.AddReference(entry, true);
   }
 
-  KernelAndKextPatches = gSettings.KernelAndKextPatches; // Jief : why do we have a duplicated KernelAndKextPatches var inside CUSTOM_LOADER_ENTRY ?
-
+//  KernelAndKextPatches = gSettings.KernelAndKextPatches; // Jief : why do we have a duplicated KernelAndKextPatches var inside CUSTOM_LOADER_ENTRY ?
+  KPDebug = gSettings.KernelAndKextPatches.KPDebug;
 }
 
 XString8Array CUSTOM_LOADER_SUBENTRY::getLoadOptions() const

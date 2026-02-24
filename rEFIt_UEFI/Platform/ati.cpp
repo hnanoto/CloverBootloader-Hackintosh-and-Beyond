@@ -1537,7 +1537,7 @@ XBool get_model_val(value_t *val, INTN index, XBool Sier)
 //static CONST UINT32 ctd[] = {0x04, 0x10, 0x800, 0x400}; //desktop
 //static UINT32 cti = 0;
 
-KERNEL_AND_KEXT_PATCHES *CurrentPatches;
+//KERNEL_AND_KEXT_PATCHES *CurrentPatches;
 
 //TODO - get connectors from ATIConnectorsPatch
 XBool get_conntype_val(value_t *val, INTN index, XBool Sier)
@@ -1551,10 +1551,11 @@ XBool get_conntype_val(value_t *val, INTN index, XBool Sier)
   //0x400: DisplayPort
   //0x02:  LVDS
 
-  if ((CurrentPatches == NULL) || (CurrentPatches->KPATIConnectorsData.isEmpty())) {
-    return false;
-  }
-  ct = CurrentPatches->KPATIConnectorsPatch.data();
+//  if ((CurrentPatches == NULL) || (CurrentPatches->KPATIConnectorsData.isEmpty())) {
+//    return false;
+//  }
+//  ct = CurrentPatches->KPATIConnectorsPatch.data();
+  ct = gSettings.KernelAndKextPatches.KPATIConnectorsPatch.data();
   Len = Sier?24:16;
 
   /*  if (gMobile) {
@@ -2246,7 +2247,7 @@ XBool setup_ati_devprop(LOADER_ENTRY *Entry, pci_dt_t *ati_dev)
   if (!init_card(ati_dev)) {
     return false;
   }
-  CurrentPatches = &Entry->KernelAndKextPatches;
+//  CurrentPatches = &Entry->KernelAndKextPatches;
 
   // -------------------------------------------------
   // Find a better way to do this (in device_inject.c)

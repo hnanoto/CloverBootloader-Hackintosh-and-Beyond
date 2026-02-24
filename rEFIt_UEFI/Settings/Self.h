@@ -30,17 +30,17 @@ protected:
   apd<EFI_DEVICE_PATH*> m_SelfDevicePath = NULL; // path to device containing this efi.
 //  XStringW          m_SelfDevicePathAsXStringW; // path to device containing this efi.
 
-  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* m_SelfSimpleVolume {};  // Volume containing this efi.
-  EFI_FILE*         m_SelfVolumeRootDir {};  // Root dir of the volume containing this efi.
+  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* m_SelfSimpleVolume = NULL;  // Volume containing this efi.
+  EFI_FILE*         m_SelfVolumeRootDir = NULL;  // Root dir of the volume containing this efi.
 
-  XStringW          m_efiFileName =  {};
-  EFI_DEVICE_PATH*  m_CloverDirFullDevicePath {}; // full path, including device, of the folder containing this efi.
-  EFI_FILE*         m_CloverDir {};               // opened folder containing this efi
+  XStringW          m_efiFileName {};
+  EFI_DEVICE_PATH*  m_CloverDirFullDevicePath  = NULL; // full path, including device, of the folder containing this efi.
+  EFI_FILE*         m_CloverDir = NULL;               // opened folder containing this efi
   XStringW          m_CloverDirFullPath {}; // full path of folder containing this efi.
   XStringW          m_CloverDirFullPath4Display {}; // prettier for diplay
 
   XBool     m_ThemesDirExists {};
-  EFI_FILE *m_ThemesDir {};
+  EFI_FILE *m_ThemesDir = NULL;
 
   EFI_STATUS _openDir(const XStringW& path, XBool* b, EFI_FILE** efiDir);
   EFI_STATUS _initialize();

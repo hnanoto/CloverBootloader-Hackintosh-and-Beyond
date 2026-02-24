@@ -1715,8 +1715,6 @@ void ModifyTitles(REFIT_ABSTRACT_MENU_ENTRY *ChosenEntry)
     if (gSettings.RtVariables.CsrActiveConfig != 0 && gSettings.RtVariables.BooterConfig == 0) {
       gSettings.RtVariables.BooterConfig = 0x28;
     }
-//  } else if (ChosenEntry->SubScreen->ID == SCREEN_BLC) {
-//	  ChosenEntry->Title.SWPrintf("boot_args->flags [0x%04hx]->", gSettings.RtVariables.BooterConfig);
   }
 }
 
@@ -1820,7 +1818,7 @@ REFIT_ABSTRACT_MENU_ENTRY *SubMenuAudio()
                                            gConf.HdaPropertiesArray[i].controller_name.wc_str(),
                                            gConf.HdaPropertiesArray[i].controller_vendor_id,
                                            gConf.HdaPropertiesArray[i].controller_device_id
-                      );
+      );
   }
 
   //SubScreen->AddMenuItemInput(59, "HDAInjection", false);
@@ -1910,7 +1908,7 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuKextsToBlock()
   REFIT_MENU_SCREEN    *SubScreen;
   REFIT_INPUT_DIALOG   *InputBootArgs;
 
-  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_KEXTS, "Kexts to block->"_XS8);
+  Entry = newREFIT_MENU_ITEM_OPTIONS(&SubScreen, ActionEnter, SCREEN_KEXTS_BLOCK, "Kexts to block->"_XS8);
 
   if (gSettings.KernelAndKextPatches.KextsToBlock.isEmpty()) {
     SubScreen->AddMenuInfoLine_f("No KextsToBlock entries.");
@@ -2103,11 +2101,8 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuBinaries()
   SubScreen->AddMenuInfo_f("----------------------");
   SubScreen->AddMenuItemInput(46,  "AppleIntelCPUPM Patch", false);
   SubScreen->AddMenuItemInput(47,  "AppleRTC Patch", false);
-//  SubScreen->AddMenuItemInput(45,  "No 8 Apples Patch", false);
   SubScreen->AddMenuItemInput(61,  "Dell SMBIOS Patch", false);
   SubScreen->AddMenuEntry(SubMenuKextsToBlock(), true);
-//  SubScreen->AddMenuItemInput(115, "No Caches", false);
-//  SubScreen->AddMenuItemInput(44,  "Kext patching allowed", false);
   SubScreen->AddMenuEntry(SubMenuKextPatches(), true);
   SubScreen->AddMenuInfo_f("----------------------");
   SubScreen->AddMenuEntry(SubMenuBootPatches(), true);
@@ -2370,37 +2365,41 @@ REFIT_ABSTRACT_MENU_ENTRY* SubMenuAudioPort()
   return Entry;
 }
 
-void CreateMenuProps(REFIT_MENU_SCREEN* SubScreen, SETTINGS_DATA::DevicesClass::SimplePropertyClass* Prop)
-{
-	REFIT_INPUT_DIALOG  *InputBootArgs;
+void CreateMenuProps(REFIT_MENU_SCREEN *SubScreen,
+                     SETTINGS_DATA::DevicesClass::SimplePropertyClass *Prop) {
+  REFIT_INPUT_DIALOG *InputBootArgs;
 
   InputBootArgs = new REFIT_INPUT_DIALOG;
-	InputBootArgs->Title.SWPrintf("  key: %s", Prop->Key.c_str());
-	InputBootArgs->Row = 0xFFFF; //cursor
-	InputBootArgs->Item = &Prop->MenuItem;
-	InputBootArgs->AtClick = ActionEnter;
-	InputBootArgs->AtRightClick = ActionDetails;
-	SubScreen->AddMenuEntry(InputBootArgs, true);
-	switch (Prop->ValueType) {
-	case kTagTypeInteger:
-			SubScreen->AddMenuInfo_f("     value: 0x%08llx", *(UINT64*)Prop->Value.data());
-		break;
-	case kTagTypeString:
-			SubScreen->AddMenuInfo_f("     value: %90s", Prop->Value.data());
-		break;
-	case   kTagTypeFalse:
-		SubScreen->AddMenuInfo_f(("     value: false"));
-		break;
-	case   kTagTypeTrue:
-		SubScreen->AddMenuInfo_f(("     value: true"));
-		break;
-  case   kTagTypeFloat:
-    SubScreen->AddMenuInfo_f("     value: %f", *(float*)Prop->Value.data());
+  InputBootArgs->Title.SWPrintf("  key: %s", Prop->Key.c_str());
+  InputBootArgs->Row = 0xFFFF; // cursor
+  InputBootArgs->Item = &Prop->MenuItem;
+  InputBootArgs->AtClick = ActionEnter;
+  InputBootArgs->AtRightClick = ActionDetails;
+  SubScreen->AddMenuEntry(InputBootArgs, true);
+  switch (Prop->ValueType) {
+  case kTagTypeInteger:
+    SubScreen->AddMenuInfo_f("     value: 0x%08llx",
+                             *(UINT64 *)Prop->Value.data());
     break;
-	default: //type data, print first 24 bytes
-			SubScreen->AddMenuInfo_f("     value[%zu]: %24s", Prop->Value.size(), Bytes2HexStr((UINT8*)Prop->Value.data(), MIN(24, Prop->Value.size())).c_str());
-		break;
-	}
+  case kTagTypeString:
+    SubScreen->AddMenuInfo_f("     value: %90s", Prop->Value.data());
+    break;
+  case kTagTypeFalse:
+    SubScreen->AddMenuInfo_f(("     value: false"));
+    break;
+  case kTagTypeTrue:
+    SubScreen->AddMenuInfo_f(("     value: true"));
+    break;
+  case kTagTypeFloat:
+    SubScreen->AddMenuInfo_f("     value: %f", *(float *)Prop->Value.data());
+    break;
+  default: // type data, print first 24 bytes
+    SubScreen->AddMenuInfo_f(
+        "     value[%zu]: %24s", Prop->Value.size(),
+        Bytes2HexStr((UINT8 *)Prop->Value.data(), MIN(24, Prop->Value.size()))
+            .c_str());
+    break;
+  }
 }
 
 REFIT_ABSTRACT_MENU_ENTRY* SubMenuProperties()
@@ -2708,7 +2707,6 @@ void  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
     }
     OptionMenu.AddMenuEntry( SubMenuACPI(), true);
     OptionMenu.AddMenuEntry( SubMenuChooseSmbios(), true);
- //   OptionMenu.AddMenuEntry( SubMenuSmbios(), true);
     OptionMenu.AddMenuEntry( SubMenuBinaries(), true);
     OptionMenu.AddMenuEntry( SubMenuQuirks(), true);
     OptionMenu.AddMenuEntry( SubMenuGraphics(), true);
@@ -2740,7 +2738,7 @@ void  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
             if (TmpChosenEntry->SubScreen != NULL) {
               NextMenuExit = 0;
               while (!NextMenuExit) {
-            	  DBG("Title=%ls\n", TmpChosenEntry->Title.wc_str());
+   //         	DBG("Title=%ls\n", TmpChosenEntry->Title.wc_str());
             	if (TmpChosenEntry->SubScreen->ID == SCREEN_SMBIOS ) {
             		DBG(".....we are in SMBIOS\n");
             		// dynamically change menu
@@ -2748,7 +2746,7 @@ void  OptionsMenu(OUT REFIT_ABSTRACT_MENU_ENTRY **ChosenEntry)
             		FillInputs(false);
             	}
                 NextMenuExit = TmpChosenEntry->SubScreen->RunGenericMenu(&NextEntryIndex, &NextChosenEntry);
-                if (NextMenuExit == MENU_EXIT_ESCAPE || NextChosenEntry->getREFIT_MENU_ITEM_RETURN()  ){
+                if (NextMenuExit == MENU_EXIT_ESCAPE || NextChosenEntry->getREFIT_MENU_ITEM_RETURN()) {
                   ApplyInputs();
                   ModifyTitles(TmpChosenEntry);
                   break;

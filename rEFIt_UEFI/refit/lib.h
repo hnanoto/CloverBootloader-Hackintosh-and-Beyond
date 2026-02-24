@@ -179,6 +179,7 @@ typedef enum {
 #define SCREEN_KEXTS_MAN      29
 #define SCREEN_AUDIOPORTS     30
 #define SCREEN_QUIRKS         31
+#define SCREEN_KEXTS_BLOCK    32
 
 
 #define MAX_ANIME  41

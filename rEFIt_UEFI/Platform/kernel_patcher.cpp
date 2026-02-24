@@ -825,8 +825,8 @@ XBool LOADER_ENTRY::PatchCPUID(const UINT8* Location, INT32 LenLoc,
   INT32 patchLocation=0, patchLocation1=0;
   INT32 Adr = 0, Num;
   XBool Patched = false;
-  UINT8 FakeModel = (KernelAndKextPatches.FakeCPUID >> 4) & 0x0f;
-  UINT8 FakeExt = (KernelAndKextPatches.FakeCPUID >> 0x10) & 0x0f;
+  UINT8 FakeModel = (gSettings.KernelAndKextPatches.FakeCPUID >> 4) & 0x0f;
+  UINT8 FakeExt = (gSettings.KernelAndKextPatches.FakeCPUID >> 0x10) & 0x0f;
   for (Num = 0; Num < 2; Num++) {
     Adr = FindBin(&KernelData[Adr], 0x800000 - Adr, Location, (UINT32)LenLoc);
     if (Adr < 0) {
@@ -1478,7 +1478,7 @@ XBool LOADER_ENTRY::BroadwellEPM()
     return false;
   }
 
-  KernelAndKextPatches.FakeCPUID = (UINT32)(macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.10.3"_XS8) ? 0x0306C0 : 0x040674);
+  gSettings.KernelAndKextPatches.FakeCPUID = (UINT32)(macOSVersion.notEmpty() && macOSVersion < MacOsVersion("10.10.3"_XS8) ? 0x0306C0 : 0x040674);
   KernelCPUIDPatch();
 
   DBG("Searching _xcpm_pkg_scope_msr ...\n");
@@ -1535,7 +1535,7 @@ XBool LOADER_ENTRY::HaswellLowEndXCPM()
     return false;
   }
 
-  KernelAndKextPatches.FakeCPUID = (UINT32)(0x0306A0);    // correct FakeCPUID
+  gSettings.KernelAndKextPatches.FakeCPUID = (UINT32)(0x0306A0);    // correct FakeCPUID
   KernelCPUIDPatch();
 
   // 10.8.5 - 10.11.x no need the following kernel patches on Haswell Celeron/Pentium
@@ -2361,19 +2361,19 @@ LOADER_ENTRY::KernelUserPatch()
   // while config patches go to gSettings.KernelAndKextPatches
   // how to resolve it?
   
-  for (size_t i = 0 ; i < KernelAndKextPatches.KernelPatches.size(); ++i) {
-    DBG( "Patch[%zu]: %s\n", i, KernelAndKextPatches.KernelPatches[i].Label.c_str());
-    if (!KernelAndKextPatches.KernelPatches[i].MenuItem.BValue) {
+  for (size_t i = 0 ; i < gSettings.KernelAndKextPatches.KernelPatches.size(); ++i) {
+    DBG( "Patch[%zu]: %s\n", i, gSettings.KernelAndKextPatches.KernelPatches[i].Label.c_str());
+    if (!gSettings.KernelAndKextPatches.KernelPatches[i].MenuItem.BValue) {
       //DBG_RT( "Patch[%d]: %a :: is not allowed for booted OS %a\n", i, KernelAndKextPatches.KernelPatches[i].Label, macOSVersion);
       DBG( "==> disabled\n");
       continue;
     }
     // if we modify directly KernelAndKextPatches.KernelPatches[i].SearchLen, it will wrong for next driver
-    UINTN SearchLen = KernelAndKextPatches.KernelPatches[i].SearchLen;
+    UINTN SearchLen = gSettings.KernelAndKextPatches.KernelPatches[i].SearchLen;
     XBool once = false;
     UINTN procLen = 0;
-    UINTN procAddr = searchProc(KernelAndKextPatches.KernelPatches[i].ProcedureName);
-    DBG("procedure %s found at 0x%llx\n", KernelAndKextPatches.KernelPatches[i].ProcedureName.c_str(), procAddr);
+    UINTN procAddr = searchProc(gSettings.KernelAndKextPatches.KernelPatches[i].ProcedureName);
+    DBG("procedure %s found at 0x%llx\n", gSettings.KernelAndKextPatches.KernelPatches[i].ProcedureName.c_str(), procAddr);
     if (SearchLen == 0) {
       SearchLen = KERNEL_MAX_SIZE;
       procLen = KERNEL_MAX_SIZE - procAddr;
@@ -2384,22 +2384,22 @@ LOADER_ENTRY::KernelUserPatch()
     UINT8 * curs = &KernelData[procAddr];
     UINTN j = 0;
     while (j < KERNEL_MAX_SIZE) {
-      if (KernelAndKextPatches.KernelPatches[i].StartPattern.isEmpty() || //old behavior
+      if (gSettings.KernelAndKextPatches.KernelPatches[i].StartPattern.isEmpty() || //old behavior
           CompareMemMask((const UINT8*)curs,
-                         KernelAndKextPatches.KernelPatches[i].StartPattern.data(),
-                         KernelAndKextPatches.KernelPatches[i].StartPattern.size(),
-                         KernelAndKextPatches.KernelPatches[i].StartMask.data(),
-                         KernelAndKextPatches.KernelPatches[i].StartPattern.size())) {
+                         gSettings.KernelAndKextPatches.KernelPatches[i].StartPattern.data(),
+                         gSettings.KernelAndKextPatches.KernelPatches[i].StartPattern.size(),
+                         gSettings.KernelAndKextPatches.KernelPatches[i].StartMask.data(),
+                         gSettings.KernelAndKextPatches.KernelPatches[i].StartPattern.size())) {
         DBG( " StartPattern found\n");
         Num = SearchAndReplaceMask(curs,
                                    procLen,
-                                   (const UINT8*)KernelAndKextPatches.KernelPatches[i].Find.data(),
-                                   (const UINT8*)KernelAndKextPatches.KernelPatches[i].MaskFind.data(),
-                                   KernelAndKextPatches.KernelPatches[i].Find.size(),
-                                   (const UINT8*)KernelAndKextPatches.KernelPatches[i].Replace.data(),
-                                   (const UINT8*)KernelAndKextPatches.KernelPatches[i].MaskReplace.data(),
-                                   KernelAndKextPatches.KernelPatches[i].Count,
-                                   KernelAndKextPatches.KernelPatches[i].Skip);
+                                   (const UINT8*)gSettings.KernelAndKextPatches.KernelPatches[i].Find.data(),
+                                   (const UINT8*)gSettings.KernelAndKextPatches.KernelPatches[i].MaskFind.data(),
+                                   gSettings.KernelAndKextPatches.KernelPatches[i].Find.size(),
+                                   (const UINT8*)gSettings.KernelAndKextPatches.KernelPatches[i].Replace.data(),
+                                   (const UINT8*)gSettings.KernelAndKextPatches.KernelPatches[i].MaskReplace.data(),
+                                   gSettings.KernelAndKextPatches.KernelPatches[i].Count,
+                                   gSettings.KernelAndKextPatches.KernelPatches[i].Skip);
         
         if (Num) {
           y++;
@@ -2407,14 +2407,14 @@ LOADER_ENTRY::KernelUserPatch()
           j    += SearchLen - 1;
         }
         DBG( "==> %s : %lld replaces done\n", Num ? "Success" : "Error", Num);
-        if ( once || KernelAndKextPatches.KernelPatches[i].StartPattern.isEmpty() ) {
+        if ( once || gSettings.KernelAndKextPatches.KernelPatches[i].StartPattern.isEmpty() ) {
           break;
         }
       }
       j++; curs++;
     }
   }
-  if (KernelAndKextPatches.KPDebug) {
+  if (gSettings.KernelAndKextPatches.KPDebug) {
     gBS->Stall(2000000);
   }
 
@@ -2427,39 +2427,39 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
   INTN Num, y = 0;
 
 
-  for (size_t i = 0 ; i < KernelAndKextPatches.BootPatches.size(); ++i)
+  for (size_t i = 0 ; i < gSettings.KernelAndKextPatches.BootPatches.size(); ++i)
   {
     // if we modify directly KernelAndKextPatches.BootPatches[i].SearchLen, it will wrong for next driver
-    UINTN SearchLen = KernelAndKextPatches.BootPatches[i].SearchLen;
+    UINTN SearchLen = gSettings.KernelAndKextPatches.BootPatches[i].SearchLen;
     if (!SearchLen) {
       SearchLen = BooterSize;
     }
 
-    DBG( "Patch[%zu]: %s\n", i, KernelAndKextPatches.BootPatches[i].Label.c_str());
-    if (!KernelAndKextPatches.BootPatches[i].MenuItem.BValue) {
+    DBG( "Patch[%zu]: %s\n", i, gSettings.KernelAndKextPatches.BootPatches[i].Label.c_str());
+    if (!gSettings.KernelAndKextPatches.BootPatches[i].MenuItem.BValue) {
       DBG( "==> disabled\n");
       continue;
     }
     UINT8 * curs = BooterData;
     UINTN j = 0;
     while (j < BooterSize) {
-      if (KernelAndKextPatches.BootPatches[i].StartPattern.isEmpty() || //old behavior
+      if (gSettings.KernelAndKextPatches.BootPatches[i].StartPattern.isEmpty() || //old behavior
           CompareMemMask((const UINT8*)curs,
-                         (const UINT8*)KernelAndKextPatches.BootPatches[i].StartPattern.data(),
-                         KernelAndKextPatches.BootPatches[i].StartPattern.size(),
-                         (const UINT8*)KernelAndKextPatches.BootPatches[i].StartMask.data(),
-                         KernelAndKextPatches.BootPatches[i].StartPattern.size())) {
+                         (const UINT8*)gSettings.KernelAndKextPatches.BootPatches[i].StartPattern.data(),
+                         gSettings.KernelAndKextPatches.BootPatches[i].StartPattern.size(),
+                         (const UINT8*)gSettings.KernelAndKextPatches.BootPatches[i].StartMask.data(),
+                         gSettings.KernelAndKextPatches.BootPatches[i].StartPattern.size())) {
         DBG( " StartPattern found\n");
 
         Num = SearchAndReplaceMask(curs,
                                    SearchLen,
-                                   (const UINT8*)KernelAndKextPatches.BootPatches[i].Find.data(),
-                                   (const UINT8*)KernelAndKextPatches.BootPatches[i].MaskFind.data(),
-                                   KernelAndKextPatches.BootPatches[i].Find.size(),
-                                   (const UINT8*)KernelAndKextPatches.BootPatches[i].Replace.data(),
-                                   (const UINT8*)KernelAndKextPatches.BootPatches[i].MaskReplace.data(),
-                                   KernelAndKextPatches.BootPatches[i].Count,
-                                   KernelAndKextPatches.BootPatches[i].Skip);
+                                   (const UINT8*)gSettings.KernelAndKextPatches.BootPatches[i].Find.data(),
+                                   (const UINT8*)gSettings.KernelAndKextPatches.BootPatches[i].MaskFind.data(),
+                                   gSettings.KernelAndKextPatches.BootPatches[i].Find.size(),
+                                   (const UINT8*)gSettings.KernelAndKextPatches.BootPatches[i].Replace.data(),
+                                   (const UINT8*)gSettings.KernelAndKextPatches.BootPatches[i].MaskReplace.data(),
+                                   gSettings.KernelAndKextPatches.BootPatches[i].Count,
+                                   gSettings.KernelAndKextPatches.BootPatches[i].Skip);
         if (Num) {
           y++;
           curs += SearchLen - 1;
@@ -2467,14 +2467,14 @@ LOADER_ENTRY::BooterPatch(IN UINT8 *BooterData, IN UINT64 BooterSize)
         }
 
         DBG( "==> %s : %lld replaces done\n", Num ? "Success" : "Error", Num);
-        if ( KernelAndKextPatches.BootPatches[i].StartPattern.isEmpty() ) {
+        if ( gSettings.KernelAndKextPatches.BootPatches[i].StartPattern.isEmpty() ) {
           break;
         }
       }
       j++; curs++;
     }
   }
-  if (KernelAndKextPatches.KPDebug) {
+  if (gSettings.KernelAndKextPatches.KPDebug) {
     gBS->Stall(2000000);
   }
   return (y != 0);

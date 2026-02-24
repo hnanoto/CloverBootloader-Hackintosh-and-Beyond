@@ -641,7 +641,7 @@
   }
   MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
   MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
-  MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
+  #MdeModulePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
   #MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
   CloverEFI/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
   #MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
@@ -1026,7 +1026,6 @@ rEFIt_UEFI/refit.inf {
   DEFINE XLTO_FLAG = -flto -DUSING_LTO
 !endif
 
-
 !ifdef EXIT_USBKB
 DEFINE EXIT_USBKB_FLAG = -DEXIT_USBKB
 !endif
@@ -1038,8 +1037,6 @@ DEFINE JIEF_DEBUG_FLAG = -DJIEF_DEBUG
 !ifdef LESS_DEBUG
 DEFINE LESS_DEBUG_FLAG = -DLESS_DEBUG
 !endif
-
-
 
 !ifdef ENABLE_MODERN_CPU_QUIRKS
 DEFINE ENABLE_MODERN_CPU_QUIRKS_FLAG = -DENABLE_MODERN_CPU_QUIRKS
@@ -1056,7 +1053,7 @@ DEFINE BUILD_OPTIONS=-DIS_UEFI_MODULE -DMDEPKG_NDEBUG -DCLOVER_BUILD -DLESS_DEBU
 
   XCODE:*_*_*_CC_FLAGS = -std=c11 -fno-unwind-tables $(BUILD_OPTIONS) $(XLTO_FLAG)
   XCODE:*_*_*_CXX_FLAGS = -std=c++11 -fno-unwind-tables $(BUILD_OPTIONS) $(XLTO_FLAG)
-  GCC:*_*_*_CC_FLAGS   = -std=c11 $(BUILD_OPTIONS) $(LTO_FLAG) -Wno-error
-  GCC:*_*_*_CXX_FLAGS  =  -std=c++11 $(BUILD_OPTIONS) $(LTO_FLAG) -Wno-error
+  GCC:*_*_*_CC_FLAGS   = -std=c11 $(BUILD_OPTIONS) $(LTO_FLAG)
+  GCC:*_*_*_CXX_FLAGS  =  -std=c++11 $(BUILD_OPTIONS) $(LTO_FLAG)
   #-fanalyzer -Wmismatched-tags 
   #-Weffc++

@@ -217,7 +217,7 @@ public:
     Label = Comment.notEmpty() ? Comment : Name;
   }
 
-  XBool ShouldBlock(const MacOsVersion& CurrOS) const;
+  int ShouldBlock(const MacOsVersion& CurrOS) const;
 };
 
 class KERNEL_AND_KEXT_PATCHES

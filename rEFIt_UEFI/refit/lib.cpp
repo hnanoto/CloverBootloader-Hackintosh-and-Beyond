@@ -172,9 +172,8 @@ EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
 void UninitRefitLib(void)
 {
   // called before running external programs to close open file handles
-  
   selfOem.closeHandle();
-  self.closeHandle();
+//  self.closeHandle();  //TODO why it hangs?
   
   closeDebugLog();
   UninitVolumes();

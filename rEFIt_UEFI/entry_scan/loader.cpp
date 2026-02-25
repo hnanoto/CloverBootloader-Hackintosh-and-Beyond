@@ -466,6 +466,7 @@ STATIC XBool isFirstRootUUID(REFIT_VOLUME *Volume) {
 }
 
 // Set Entry->VolName to .disk_label.contentDetails if it exists
+// Set Entry/Volume display name to .disk_label.contentDetails if it exists
 STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry) {
   EFI_STATUS Status = EFI_NOT_FOUND;
   CONST CHAR16 *targetNameFile =
@@ -476,7 +477,10 @@ STATIC EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry) {
     Status = egLoadFile(Entry->Volume->RootDir, targetNameFile,
                         (UINT8 **)&fileBuffer, &fileLen);
     if (!EFI_ERROR(Status)) {
-      Entry->DisplayedVolName.strncpy(fileBuffer, fileLen);
+      if (Entry->DisplayedVolName.isEmpty()) {
+        Entry->DisplayedVolName.strncpy(fileBuffer, fileLen);
+      }
+      Entry->Volume->osxVolumeName.strncpy(fileBuffer, fileLen);
       DBG("Created name:%ls\n", Entry->DisplayedVolName.wc_str());
 
       FreePool(fileBuffer);
@@ -1424,6 +1428,7 @@ void LOADER_ENTRY::AddDefaultMenu() {
   UINT64 VolumeSize;
   EFI_GUID Guid;
   XBool KernelIs64BitOnly;
+  XStringW OldOSName{OSName};
 
   constexpr LString8 quietLitteral = "quiet"_XS8;
   constexpr LString8 splashLitteral = "splash"_XS8;
@@ -1623,6 +1628,7 @@ void LOADER_ENTRY::AddDefaultMenu() {
     SubEntry->Title.SWPrintf("Run %ls", FileName.wc_str());
     SubScreen->AddMenuEntry(SubEntry, true);
   }
+  OSName = OldOSName;
 }
 
 LOADER_ENTRY *AddLoaderEntry(IN CONST XStringW &LoaderPath,

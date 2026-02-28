@@ -14,7 +14,7 @@
 
 
 #if 1
-#define XObjArray_DBG(...) printf__VA_ARGS__)
+#define XObjArray_DBG(...) printf(__VA_ARGS__)
 #else
 #define XObjArray_DBG(...)
 #endif

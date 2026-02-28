@@ -8,7 +8,7 @@
 
 
 #if 0
-#define DBG(...) printf__VA_ARGS__)
+#define DBG(...) printf(__VA_ARGS__)
 #else
 #define DBG(...)
 #endif

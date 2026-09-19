@@ -385,7 +385,7 @@ void AddCustomLegacy(void)
       }
       // Create a legacy entry for this volume
       DBG("\n");
-      if (AddLegacyEntry(Custom.settings.FullTitle, Custom.settings.Title, Volume, &MainIcon, &DriveIcon, Custom.settings.Hotkey, true))
+      if (AddLegacyEntry(XStringW(Custom.settings.FullTitle), Custom.settings.Title, Volume, &MainIcon, &DriveIcon, Custom.settings.Hotkey, true))
       {
 //        DBG("match!\n");
       }

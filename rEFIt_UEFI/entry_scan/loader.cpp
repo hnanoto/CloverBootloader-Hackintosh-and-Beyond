@@ -1041,7 +1041,7 @@ CONST XStringW GetOSIconName(const MacOsVersion &OSVersion) {
 
 STATIC LOADER_ENTRY *CreateLoaderEntry(
     IN CONST XStringW &LoaderPath, IN CONST XString8Array &LoaderOptions,
-    IN CONST XString8 &FullTitle, IN CONST XString8 &LoaderTitle,
+    IN CONST XStringW &FullTitle, IN CONST XStringW &LoaderTitle,
     IN REFIT_VOLUME *Volume, IN XIcon *Image, IN XIcon *DriveImage,
     IN UINT8 OSType, IN UINT8 Flags, IN wchar_t Hotkey,
     EFI_GRAPHICS_OUTPUT_BLT_PIXEL BootBgColor, IN UINT8 CustomBoot,
@@ -1099,7 +1099,6 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(
       }
     }
 
-    XString8 Title;
     // If this isn't a custom entry make sure it's not hidden by a custom entry
     for (size_t CustomIndex = 0;
          CustomIndex < GlobalConfig.CustomEntries.size(); ++CustomIndex) {
@@ -1116,10 +1115,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(
         INTN path_match = 0;
         INTN type_match = 0;
 
-        if (Custom.settings.FullTitle.notEmpty()) {
-          Title = Custom.settings.FullTitle;
-        }
-        Entry->Title = Custom.settings.FullTitle;
+		Entry->Title.SWPrintf("%ls", FullTitle.wc_str());
 
         // Check if volume match
         if (Custom.settings.Volume.notEmpty()) {
@@ -1270,14 +1266,12 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(
       OSIconName = LinuxIconNameFromPath(
           LoaderPath, Volume->RootDir); // something named "issue"
     }
-    // DBG("linux name icon from path= %ls\n", OSIconName.wc_str());
-    // DBG("LoaderTitle=%s Full Title=%s Title=%ls\n", LoaderTitle.c_str(),
-    // FullTitle.c_str(), Entry->Title.wc_str());
-    if (AsciiStrStr(LoaderTitle.c_str(), "Arch")) {
+
+    if (StrStr(LoaderTitle.wc_str(), L"Arch")) {
       OSIconName = L"arch"_XSW;
-    } else if (AsciiStrStr(LoaderTitle.c_str(), "Ubuntu")) {
+    } else if (StrStr(LoaderTitle.wc_str(), L"Ubuntu")) {
       OSIconName = L"ubuntu"_XSW;
-    } else if (AsciiStrStr(LoaderTitle.c_str(), "Alt")) {
+    } else if (StrStr(LoaderTitle.wc_str(), L"Alt")) {
       OSIconName = L"alt"_XSW;
     }
     DBG("assigned linux name icon %ls\n", OSIconName.wc_str());
@@ -1294,22 +1288,23 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(
     Entry->LoaderType = OSTYPE_OTHER;
     break;
   }
-//  DBG("OSIconName=%ls \n", OSIconName.wc_str());
+  DBG("OSIconName=%ls \n", OSIconName.wc_str());
   Entry->OSName = OSIconName.subString(0, OSIconName.indexOf(',')); // TODO
   //  SmbiosList.AddReference(OSName.forgetDataWithoutFreeing(), true);
 
-  Entry->Title = FullTitle;
+  Entry->Title.SWPrintf("%ls", FullTitle.wc_str());
+  DBG("OSName=%ls Title=%ls\n", Entry->OSName.wc_str(), Entry->Title.wc_str());
   if (Entry->Title.isEmpty() && Volume->VolLabel.notEmpty()) {
     if (Volume->VolLabel[0] == L'#') {
       Entry->Title.SWPrintf("Boot %ls from %ls",
                             (!LoaderTitle.isEmpty())
-                                ? XStringW(LoaderTitle).wc_str()
+                                ? LoaderTitle.wc_str()
                                 : LoaderPath.basename().wc_str(),
                             Volume->VolLabel.data(1));
     } else {
       Entry->Title.SWPrintf("Boot %ls from %ls",
                             (!LoaderTitle.isEmpty())
-                                ? XStringW(LoaderTitle).wc_str()
+                                ? LoaderTitle.wc_str()
                                 : LoaderPath.basename().wc_str(),
                             Volume->VolLabel.wc_str());
     }
@@ -1323,7 +1318,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(
     //   ==%llu\n",Entry->VolName, StrLen(Entry->VolName));
     if (BootCampStyle) {
       if (!LoaderTitle.isEmpty()) {
-        Entry->Title = LoaderTitle;
+		Entry->Title.SWPrintf("%ls", LoaderTitle.wc_str());
       } else {
         Entry->Title =
             (BasenameXW.contains(L"-"))
@@ -1333,7 +1328,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(
     } else {
       Entry->Title.SWPrintf(
           "Boot %ls from %ls",
-          (!LoaderTitle.isEmpty()) ? XStringW(LoaderTitle).wc_str()
+          (!LoaderTitle.isEmpty()) ? LoaderTitle.wc_str()
                                    : LoaderPath.basename().wc_str(),
           (BasenameXW.contains(L"-"))
               ? (BasenameXW.subString(0, BasenameXW.indexOf(L"-") + 1) + L"..)")
@@ -1341,17 +1336,15 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(
               : BasenameXW.wc_str());
     }
   }
- // DBG("check Entry->Title \n");
+
   if (Entry->Title.isEmpty()) {
-    //   DBG("encounter LoaderTitle ==%ls and Entry->VolName ==%ls\n",
-    //   LoaderTitle.wc_str(), Entry->VolName);
     if (BootCampStyle) {
-      if ((StriCmp(XStringW(LoaderTitle).wc_str(), L"macOS") == 0) ||
-          (StriCmp(XStringW(LoaderTitle).wc_str(), L"Recovery") == 0)) {
+      if ((StriCmp(LoaderTitle.wc_str(), L"macOS") == 0) ||
+          (StriCmp(LoaderTitle.wc_str(), L"Recovery") == 0)) {
         Entry->Title.takeValueFrom(Entry->DisplayedVolName);
       } else {
         if (!LoaderTitle.isEmpty()) {
-          Entry->Title = LoaderTitle;
+          Entry->Title.SWPrintf("%ls", LoaderTitle.wc_str());
         } else {
           Entry->Title = LoaderPath.basename();
         }
@@ -1359,7 +1352,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(
     } else {
       Entry->Title.SWPrintf("Boot %ls from %ls",
                             (!LoaderTitle.isEmpty())
-                                ? XStringW(LoaderTitle).wc_str()
+                                ? LoaderTitle.wc_str()
                                 : LoaderPath.basename().wc_str(),
                             Entry->DisplayedVolName.wc_str());
     }
@@ -1385,16 +1378,15 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(
   } else {
     Entry->Image = ThemeX->LoadOSIcon(OSIconName);
   }
-  //  DBG("Load DriveImage\n");
+
   // Load DriveImage
   if (DriveImage) {
-    //    DBG("DriveImage presents\n");
     Entry->DriveImage = *DriveImage;
   } else {
     Entry->DriveImage =
         ScanVolumeDefaultIcon(Volume, Entry->LoaderType, Volume->DevicePath);
   }
-  //   DBG("HideBadges=%llu Volume=%ls ", ThemeX->HideBadges, Volume->VolName);
+
   if (ThemeX->HideBadges & HDBADGES_SHOW) {
     if (ThemeX->HideBadges & HDBADGES_SWAP) {
       Entry->BadgeImage.Image = XImage(Entry->DriveImage.Image, 0);
@@ -1405,14 +1397,7 @@ STATIC LOADER_ENTRY *CreateLoaderEntry(
     }
   }
   Entry->BootBgColor = BootBgColor;
-//  Entry->KernelAndKextPatches =
-//      ((Patches == NULL) ? gSettings.KernelAndKextPatches : *Patches);
   Entry->KPDebug = ((Patches == NULL) ? gSettings.KernelAndKextPatches.KPDebug : Patches->KPDebug);
-//  if (Patches) {
-//	Entry->KernelAndKextPatches.takeValueFrom(*Patches);
-//  } else {
-//	Entry->KernelAndKextPatches.takeValueFrom(gSettings.KernelAndKextPatches);
-//  }
 
 #ifdef DUMP_KERNEL_KEXT_PATCHES
   DumpKernelAndKextPatches(gSettings.KernelAndKextPatches);
@@ -1451,7 +1436,7 @@ void LOADER_ENTRY::AddDefaultMenu() {
                             DisplayedVolName.wc_str());
 
   SubScreen->TitleImage = Image;
-  SubScreen->ID = LoaderType + 40; // wow
+  SubScreen->ID = LoaderType + 40; 
 //     DBG("get anime for os=%lld\n", SubScreen->ID);
   SubScreen->GetAnime();
   VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock,
@@ -2548,16 +2533,9 @@ void ScanLoader(void)
 
   DBG("Entries list before ordering\n");
   for (size_t idx = 0; idx < MainMenu.Entries.sizeIncludingHidden(); idx++) {
-    if (MainMenu.Entries.ElementAt(idx).getLOADER_ENTRY()) {
-      DBG("    Entry %zd : %ls%s \n", idx,
-          MainMenu.Entries.ElementAt(idx).Title.wc_str(),
-          MainMenu.Entries.ElementAt(idx).Hidden ? " (hidden)" : ""
-		  );
-    } else {
-      DBG("    Entry %zd : %ls%s\n", idx,
-          MainMenu.Entries.ElementAt(idx).Title.wc_str(),
-          MainMenu.Entries.ElementAt(idx).Hidden ? " (hidden)" : "");
-    }
+    DBG("    Entry %zd : %ls %s\n", idx,
+        MainMenu.Entries.ElementAt(idx).Title.wc_str(),
+        MainMenu.Entries.ElementAt(idx).Hidden ? " (hidden)" : "");
   }
 
   // Hide redundant preboot partition
@@ -2755,7 +2733,7 @@ void ScanLoader(void)
 
   DBG("Entries list after ordering\n");
   for (size_t idx = 0; idx < MainMenu.Entries.sizeIncludingHidden(); idx++) {
-    DBG("  Entry %zd : %ls%s\n", idx,
+    DBG("  Entry %zd : %ls %s\n", idx,
         MainMenu.Entries.ElementAt(idx).Title.wc_str(),
         MainMenu.Entries.ElementAt(idx).Hidden ? " (hidden)" : "");
   }
@@ -2815,7 +2793,7 @@ STATIC void AddCustomSubEntry(REFIT_VOLUME *Volume, IN UINTN CustomIndex,
 
   // Create an entry for this volume
   Entry = CreateLoaderEntry(
-      CustomPath, CustomOptions, Custom.getFullTitle(), Custom.getTitle(),
+      CustomPath, CustomOptions, XStringW(Custom.getFullTitle()), XStringW(Custom.getTitle()),
       Volume, NULL, NULL, parentType, newCustomFlags, 0, {0, 0, 0, 0}, 0,
       NullXImage,
       /*(KERNEL_AND_KEXT_PATCHES *)(((UINTN)Custom) +
@@ -3199,8 +3177,8 @@ STATIC void AddCustomEntry(IN UINTN CustomIndex, IN const XStringW &_CustomPath,
       DBG("match!\n");
       // Create an entry for this volume
       Entry = CreateLoaderEntry(
-          CustomPath, CustomOptions, Custom.settings.FullTitle,
-          Custom.settings.dgetTitle(), Volume,
+          CustomPath, CustomOptions, XStringW(Custom.settings.FullTitle),
+          XStringW(Custom.settings.dgetTitle()), Volume,
           (Image.isEmpty() ? NULL : &Image),
           (DriveImage.isEmpty() ? NULL : &DriveImage), Custom.settings.Type,
           newCustomFlags, Custom.settings.Hotkey, Custom.settings.BootBgColor,

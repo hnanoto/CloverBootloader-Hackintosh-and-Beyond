@@ -747,15 +747,23 @@ void LOADER_ENTRY::FilterKextsToBlock() {
   if (gSettings.KernelAndKextPatches.KextsToBlock.isEmpty()) {
     return;
   }
+  DBG("Filtering KextsToBlock:\n");
+  for (size_t i = 0; i < gSettings.KernelAndKextPatches.KextsToBlock.size(); i++) {
+    const char* status = "allowed";
+    if (!gSettings.KernelAndKextPatches.KextsToBlock[i].MenuItem.BValue) {
+      status = "disabled by user";
+    } else if (!gSettings.KernelAndKextPatches.KextsToBlock[i].ShouldBlock(macOSVersion)) {
+      status = "not allowed";
+    }
 
-//  size_t count = gSettings.KernelAndKextPatches.KextsToBlock.size();
-////  size_t entryCount = KernelAndKextPatches.KextsToBlock.size();
-////  size_t count = (settingsCount < entryCount) ? settingsCount : entryCount;
-//
-//  for (size_t i = 0; i < count; ++i) {
-//    gSettings.KernelAndKextPatches.KextsToBlock[i].MenuItem.BValue =
-//        gSettings.KernelAndKextPatches.KextsToBlock[i].MenuItem.BValue;
-//  }
+    DBG(" - [%02zu]: %s :: [OS: %s | MatchOS: %s] ==> %s\n", i,
+        gSettings.KernelAndKextPatches.KextsToBlock[i].Label.c_str(),
+        macOSVersion.asString().c_str(),
+        gSettings.KernelAndKextPatches.KextsToBlock[i].MatchOS.notEmpty()
+            ? gSettings.KernelAndKextPatches.KextsToBlock[i].MatchOS.c_str()
+            : "All",
+        status);
+  }
 }
 
 //
@@ -1686,14 +1694,8 @@ void LOADER_ENTRY::StartLoader()
           (UINT8 *)SysRoot;
 
       size_t i1 = forceKext.rindexOf("\\") + 1;
-      if (i1 == MAX_XSIZE) i1 = 0;
       size_t i2 = forceKext.rindexOf(".");
-      XStringW identifier;
-      if (i2 != MAX_XSIZE && i2 > i1) {
-        identifier = forceKext.subString(i1, i2 - i1);
-      } else {
-        identifier = forceKext.subString(i1, MAX_XSIZE);
-      }
+      XStringW identifier = forceKext.subString(i1, i2 - i1);
       OC_STRING_ASSIGN(
           mOpenCoreConfiguration.Kernel.Force.Values[kextIdx]->Identifier,
           S8Printf("%ls", identifier.wc_str()).c_str());
@@ -1831,7 +1833,6 @@ void LOADER_ENTRY::StartLoader()
     } else {
       DBG("No OpenRuntime driver. This is wrong, OpenRuntime is mandatory.\n");
     }
-
     OcMain(&mOpenCoreStorage, NULL);
 
     XStringW DevicePathAsString = DevicePathToXStringW(DevicePath);
@@ -1940,7 +1941,6 @@ void LOADER_ENTRY::StartLoader()
     // This should happen only for 10.7-10.9 OSTYPE_OSX_INSTALLER
     // For these cases, take OSVersion from loaded boot.efi image in memory
     if (macOSVersion.isEmpty()) {
-
       if (!EFI_ERROR(Status)) {
         // version in boot.efi appears as "Mac OS X 10.?"
         /*
@@ -2000,12 +2000,17 @@ void LOADER_ENTRY::StartLoader()
 
     FilterKextPatches();
     FilterKernelPatches();
+    FilterKextsToBlock();
     FilterBootPatches();
     if (LoadedImage &&
         !BooterPatch((UINT8 *)LoadedImage->ImageBase, LoadedImage->ImageSize)) {
       DBG("Will not patch boot.efi\n");
     }
-    gConf.ReloadSmbios(OSName);
+    auto actualOSName_str = GetOSIconName(macOSVersion);
+    DBG("actualOS_icon=%ls\n", actualOSName_str.wc_str());
+    auto actualOSName =  actualOSName_str.subString(0, actualOSName_str.indexOf(L','));
+    DBG("actualOSName=%ls\n", actualOSName.wc_str());
+    gConf.ReloadSmbios(actualOSName);
     DelegateKernelPatches();
 
     // Set boot argument for kernel if no caches, this should force kernel

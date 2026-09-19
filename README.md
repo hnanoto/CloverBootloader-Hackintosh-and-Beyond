@@ -1,9 +1,11 @@
 
 # CloverBootloader 
-[![CI](https://github.com/CloverHackyColor/CloverBootloader/actions/workflows/main.yml/badge.svg)](https://github.com/CloverHackyColor/CloverBootloader/actions/workflows/main.yml)
+[![CI](https://github.com/CloverHackyColor/CloverBootloader/actions/workflows/main.yml/badge.svg)](https://github.com/CloverHackyColor/CloverBootloader/actions/workflows/main.yml) [![License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://github.com/CloverHackyColor/CloverBootloader/blob/master/LICENSE) 
+
+<img width="200" alt="CloverLogo" src="Logo/Clover-Logo-Default-256x256@1x.png">
 
 Bootloader for macOS, Windows and Linux in UEFI and in legacy mode
-### Read the DOC [Clover-Documentation](https://github.com/CloverHackyColor/Clover-Documentation) / [Clover-Documentation Site](https://cloverhackycolor.github.io/Clover-Documentation/)
+### Read the DOC [Clover-Wiki](https://github.com/CloverHackyColor/CloverBootloader/wiki) / [Clover-Documentation](https://github.com/CloverHackyColor/Clover-Documentation) / [Clover History](https://htmlpreview.github.io/?https://github.com/CloverHackyColor/CloverBootloader/blob/master/Clover%20History.html)
 
 # Features
 
@@ -35,7 +37,7 @@ Bootloader for macOS, Windows and Linux in UEFI and in legacy mode
 
 ### Developers:
 
-*   Slice, with help of Kabyl, usr-sse2, jadran, Blackosx, dmazar, STLVNUB, pcj, apianti, JrCs, pene, FrodoKenny, skoczy, ycr.ru, Oscar09, xsmile, SoThOr, rehabman, Download-Fritz, nms42, Sherlocks, Zenit432, cecekpawon, stinga11, TheRacerMaster, solstice, Micky1979, Needy, joevt, ErmaC, vit9696, ath, savvas, syscl, goodwin\_c, clovy, jief\_machak, chris1111, vector\_sigma, LAbyOne, Florin9doi, Hnanoto.
+*   Slice, with help of Kabyl, usr-sse2, jadran, Blackosx, dmazar, STLVNUB, pcj, apianti, JrCs, pene, FrodoKenny, skoczy, ycr.ru, Oscar09, xsmile, SoThOr, rehabman, Download-Fritz, nms42, Sherlocks, Zenit432, cecekpawon, stinga11, TheRacerMaster, solstice, Micky1979, Needy, joevt, ErmaC, vit9696, ath, savvas, syscl, goodwin\_c, clovy, jief\_machak, chris1111, vector\_sigma, LAbyOne, Florin9doi, YBronst, Hnanoto.
     
     ### Source code credits to:
     Intel, Apple, Oracle, Chameleon, rEFIt and Xom, nanosvg.

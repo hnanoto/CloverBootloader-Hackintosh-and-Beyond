@@ -275,7 +275,7 @@ public:
   XStringW Path = XStringW();
   undefinable_XString8 Arguments = undefinable_XString8();
   XString8 AddArguments = XString8();
-  XString8 FullTitle = XStringW();
+  XString8 FullTitle = XString8();
   XStringW Settings = XStringW(); // path of a config.plist that'll be read at
                                   // the beginning of startloader
   char32_t Hotkey = 0;
@@ -302,7 +302,7 @@ public:
 
 public: // temporary, must be protected:
   XStringW m_DriveImagePath = XStringW();
-  XString8 m_Title = XStringW();
+  XString8 m_Title = XString8();
   UINT8 CustomLogoTypeSettings = 0;
   XStringW m_ImagePath = XStringW();
 

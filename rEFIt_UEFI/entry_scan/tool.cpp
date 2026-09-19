@@ -308,10 +308,10 @@ void AddCustomTool(void)
       }
       DBG("match!\n");
       if (Image.isEmpty()) {
-        AddToolEntry(Custom.settings.Path, Custom.settings.FullTitle.wc_str(), Custom.settings.Title.wc_str(), Volume, ThemeX->GetIcon(BUILTIN_ICON_TOOL_SHELL), Custom.settings.Hotkey, Custom.getLoadOptions());
+        AddToolEntry(Custom.settings.Path, XStringW(Custom.settings.FullTitle).wc_str(), Custom.settings.Title.wc_str(), Volume, ThemeX->GetIcon(BUILTIN_ICON_TOOL_SHELL), Custom.settings.Hotkey, Custom.getLoadOptions());
       } else {
       // Create a legacy entry for this volume
-        AddToolEntry(Custom.settings.Path, Custom.settings.FullTitle.wc_str(), Custom.settings.Title.wc_str(), Volume, Image, Custom.settings.Hotkey, Custom.getLoadOptions());
+        AddToolEntry(Custom.settings.Path, XStringW(Custom.settings.FullTitle).wc_str(), Custom.settings.Title.wc_str(), Volume, Image, Custom.settings.Hotkey, Custom.getLoadOptions());
       }
 //      break; // break scan volumes, continue scan entries -- why?
     }
